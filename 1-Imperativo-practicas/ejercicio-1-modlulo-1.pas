@@ -32,7 +32,7 @@ begin
   end;
 end;
 
-procedure carcarVector(var v: vVentas; var dimL: integer;);
+procedure cargarVector(var v: vVentas; var dimL: integer;);
 var
   v: venta;
 begin
@@ -50,5 +50,5 @@ var
 begin
   Randomize;
   dimL := 0;
-  carcarVector(v,dimL);
+  cargarVector(v,dimL);
 end.
