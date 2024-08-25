@@ -1,83 +1,93 @@
-program ej1Mod1;
 
-uses
-  sysUtils;
+Program ej1Mod1;
 
-const
+Uses 
+sysUtils;
+
+Const 
   dimF = 20;
 
-type
+Type 
 
   rVentas = 1..dimF;
   rCodP = 0..15;
   rCantProd = 1..99;
 
-  venta = record
+  venta = Record
     codP: rCodP;
     cantProd: rCantProd;
-  end;
+  End;
 
-  vVentas = array[rVentas] of venta;
+  vVentas = array[rVentas] Of venta;
 
 {modulos}
 
-procedure leerVenta(var v: venta);
-begin
-  with v do begin
-    codP := Random(15);
-    if (codP <> 0) then begin  
-      write('Ingrese cantidad de unidades vendidas: ');
-      readln(cantProd);
-    end;
-  end;
-end;
+Procedure leerVenta(Var v: venta);
+Begin
+  With v Do
+    Begin
+      codP := Random(15);
+      If (codP <> 0) Then
+        Begin
+          write('Ingrese cantidad de unidades vendidas: ');
+          readln(cantProd);
+        End;
+    End;
+End;
 
-function esta(v: vVentas; codigo: rCodP; dimL: integer):boolean;
-var
+Function esta(v: vVentas; codigo: rCodP; dimL: integer): boolean;
+
+Var 
   p: rVentas;
   encontre: boolean;
-begin
+Begin
   p := 1;
   encontre := false;
-  while(p <= dimL) and (not encontre) do begin
-    if (v[p].codP <> codigo) then
-      p := p + 1
-    else
-      encontre := true;
-  end;
+  While (p <= dimL) And (Not encontre) Do
+    Begin
+      If (v[p].codP <> codigo) Then
+        p := p + 1
+      Else
+        encontre := true;
+    End;
   esta := encontre;
-end;
+End;
 
-procedure cargarVector(var v: vVentas; var dimL: integer);
-var
+Procedure cargarVector(Var v: vVentas; Var dimL: integer);
+
+Var 
   ve: venta;
-begin
+Begin
   leerVenta(ve);
-  while (dimL < dimF) and (ve.codP <> 0) do begin
-    dimL := dimL + 1;
-    if(not esta(v,ve.codP,dimL)) then
-      v[dimL] := ve;
-    leerVenta(ve);
-  end;
-end;
+  While (dimL < dimF) And (ve.codP <> 0) Do
+    Begin
+      dimL := dimL + 1;
+      If (Not esta(v,ve.codP,dimL)) Then
+        v[dimL] := ve;
+      leerVenta(ve);
+    End;
+End;
 
-procedure imprimirVector(v: vVentas; dimL: integer);
-var
+Procedure imprimirVector(v: vVentas; dimL: integer);
+
+Var 
   i: rVentas;
-begin
-  for i := 1 to dimL do begin
-    writeln('Codigo del producto: ',v[i].codP,'');
-    writeln('Cantidad del producto comprada: ',v[i].cantProd,'');
-  end;
-end;
+Begin
+  For i := 1 To dimL Do
+    Begin
+      writeln('Codigo del producto: ',v[i].codP,'');
+      writeln('Cantidad del producto comprada: ',v[i].cantProd,'');
+    End;
+End;
 
 {Programa principal}
-var
+
+Var 
   v: vVentas;
   dimL: integer;
-begin
+Begin
   Randomize;
   dimL := 0;
   cargarVector(v,dimL);
   imprimirVector(v,dimL);
-end.
+End.
