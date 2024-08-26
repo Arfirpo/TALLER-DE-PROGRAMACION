@@ -1,4 +1,3 @@
-
 Program Clase1MI;
 
 Const 
@@ -240,3 +239,4 @@ Begin
     end;
   End;
 End.
+
