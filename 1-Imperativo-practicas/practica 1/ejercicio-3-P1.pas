@@ -176,21 +176,21 @@ Begin
     End;
 End;
 
-Procedure imprimirVector(v: vGeneneros);
+// Procedure imprimirVector(v: vGeneneros);
 
-Var 
-  i: rGen;
-  act: lPeliculas;
-Begin
-  For i := 1 To dimF_gen Do
-    Begin
-      act := v[i].pri;
-      While act <> Nil Do
-        Begin
+// Var 
+//   i: rGen;
+//   act: lPeliculas;
+// Begin
+//   For i := 1 To dimF_gen Do
+//     Begin
+//       act := v[i].pri;
+//       While act <> Nil Do
+//         Begin
 
-        End;
-    End;
-End;
+//         End;
+//     End;
+// End;
 
 
 {Programa principal}
