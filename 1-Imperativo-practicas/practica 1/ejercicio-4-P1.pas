@@ -32,7 +32,7 @@ var
   num1,num2: integer;
 begin
   with p do begin
-    codP := Random(50);
+    codP := Random(150);
     if (codP <> 0) Then begin
       codR := Random(dimF_rubro) + 1;
       num1 := Random(1000) + 1;
@@ -99,26 +99,10 @@ begin
       l := l^.sig;
     end;
   end;
-  writeln('--------------------------------------');
+  
 end;
 
-// Procedure ordenacionInsercion (Var v: vRubros);
 
-// Var 
-//   j, i: integer;
-// Begin
-//   For i:= 2 To dimF_gen Do
-//     Begin
-//       aux := v[i];
-//       j := i-1;
-//       While (j > 0) And (v[j].punMax > aux.punMax) Do
-//         Begin
-//           v[j+1] := v[j];
-//           j := j -1;
-//         End;
-//       v[j+1] := aux;
-//     End;
-// End;
 
 procedure cargarVector2(l: lProductos; var v: vRubro3; var dimL: rRubro3);
 begin
@@ -130,18 +114,34 @@ begin
   end;
 end;
 
+Procedure ordenacionInsercion (Var v: vRubro3; dimL: rRubro3);
+
+Var 
+  j, i: rRubro3;
+  act: producto;
+Begin
+  For i:= 2 To dimL Do
+    Begin
+      act := v[i];
+      j := i-1;
+      While (j > 0) And (v[j].precio > act.precio) Do
+        Begin
+          v[j+1] := v[j];
+          j := j -1;
+        End;
+      v[j+1] := act;
+    End;
+End;
+
 procedure imprimirVector2(v: vRubro3; dimL: rRubro3);
 var
   i: rRubro3;
 begin
-  writeln('                 --------------------------------        ');
-  writeln('                 Productos del Rubro 3 - S/Orden'         );
-  writeln('                 --------------------------------        ');
   for i := 1 to dimL do begin
-    writeln;
     write('| Codigo de Producto: ',v[i].codP);
     write('| Codigo de Rubro: ',v[i].codR);
-    write('| Precio del Producto: ',v[i].codP,' |');
+    write('| Precio del Producto: ',v[i].precio:0:2,' |');
+    writeln;
   end;
 end;
 
@@ -155,7 +155,17 @@ begin
   inicializarVector(vR);
   cargarVector(vR);
   imprimirVector(vR);
-  // ordenacionInsercion(vR);
+  
+
+  writeln('                 --------------------------------        ');
+  writeln('                 Productos del Rubro 3 - S/Orden'         );
+  writeln('                 --------------------------------        ');
   cargarVector2(vR[3],vR3,dimL);
+  imprimirVector2(vR3,dimL);
+
+  writeln('                 --------------------------------        ');
+  writeln('                 Productos del Rubro 3 - Ordenados'       );
+  writeln('                 --------------------------------        ');
+  ordenacionInsercion(vR3,dimL);
   imprimirVector2(vR3,dimL);
 end.

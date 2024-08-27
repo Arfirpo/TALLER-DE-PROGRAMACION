@@ -176,21 +176,26 @@ Begin
     End;
 End;
 
-// Procedure imprimirVector(v: vGeneneros);
-
-// Var 
-//   i: rGen;
-//   act: lPeliculas;
-// Begin
-//   For i := 1 To dimF_gen Do
-//     Begin
-//       act := v[i].pri;
-//       While act <> Nil Do
-//         Begin
-
-//         End;
-//     End;
-// End;
+// procedure imprimirVector(v: vRubros);
+// var
+//   i: rRubro; 
+//   l: lProductos;
+// begin
+//   for i := 1 to dimF_rubro do begin
+//     writeln('                 ----------------------         ');
+//     writeln('                 Productos del Rubro: ', i, '.');
+//     writeln('                 ----------------------         ');
+//     l := v[i];
+//     while (l <> nil) do begin
+//       write('|Codigo de Producto: ', l^.dato.codP, '|');
+//       write(' Codigo de Rubro: ', l^.dato.codR, '|');
+//       write(' Precio del Producto: ', l^.dato.precio:0:2, '|');
+//       writeln;
+//       l := l^.sig;
+//     end;
+//   end;
+//   writeln('--------------------------------------');
+// end;
 
 
 {Programa principal}
