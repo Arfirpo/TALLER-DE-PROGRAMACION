@@ -227,9 +227,28 @@ begin
   InformarExistenciaNombreSocio := buscarSocioRecursiva(a,nom);
 end;
 
-{Programa Principal}
+function InformarCantidadSocios(a: arbol): integer;
+begin
+  if (a = nil) then InformarCantidadSocios := 0
+  else
+    InformarCantidadSocios := InformarCantidadSocios(a^.HI) + 1 + InformarCantidadSocios(a^.HD);
+end;
 
-Var a: arbol;
+function InformarPromedioDeEdad(a: arbol): real;
+
+  function sumaEdadRecursiva(a: arbol): integer;
+  begin
+    if(a = nil) then sumaEdadRecursiva := 0
+    else
+      sumaEdadRecursiva := sumaEdadRecursiva(a^.HI) + a^.dato.edad + sumaEdadRecursiva(a^.HD);
+  end;
+
+begin
+  InformarPromedioDeEdad := sumaEdadRecursiva(a);
+end;
+
+{Programa Principal}
+Var a: arbol; cantSocios: integer;
 Begin
   randomize;
   GenerarArbol (a);
@@ -243,7 +262,14 @@ Begin
   writeln;
   writeln ('//////////////////////////////////////////////////////////');
   writeln;
-  {  InformarCantidadSocios (a); COMPLETAR
-    InformarPromedioDeEdad (a); COMPLETAR
-  }
+  cantSocios := InformarCantidadSocios (a);
+  write('La cantidad de socios es de: ');
+  writeln(cantSocios); 
+  writeln;
+  writeln ('//////////////////////////////////////////////////////////');
+  writeln;
+  write('El promedio de edad de los socios es de: ');
+  writeln((InformarPromedioDeEdad (a) / cantSocios):0:2);
+  writeln;
+  writeln ('//////////////////////////////////////////////////////////');
 End.
