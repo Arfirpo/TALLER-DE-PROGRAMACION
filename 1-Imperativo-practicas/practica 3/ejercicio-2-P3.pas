@@ -3,7 +3,7 @@ program ejercicio2P3;
 Const
   dMax = 31;
   mMax = 12;
-  anio_min = 1950;
+  anio_min = 2020;
   anio_act = 2024;
 
 {-------------------- tipos de datos --------------------}
@@ -322,6 +322,138 @@ Const
     writeln;
   end;
 
+  procedure ventasPorFecha(a: arb_Ventas);
+
+    procedure cargarFecha(var f: fechas);
+    begin
+      with f do begin
+        repeat
+          write('Ingrese un dia del mes (entre 1 y 31): ');
+          readln(dia);
+        until (dia >= 1) and (dia <= 31);
+        repeat
+          write('Ingrese un mes del anio (entre 1 y 12): ');
+          readln(mes);
+        until (mes >= 1) and (mes <= 12);
+        repeat
+          write('Ingrese un anio (entre ',anio_min,' y ',anio_act,'): ');
+          readln(anio);
+        until (anio >= anio_min) and (anio <= anio_act);
+      end;
+    end;
+
+    function cantVentas(a: arb_Ventas;f: fechas): integer;
+    begin
+      if (a = nil) then
+        cantVentas := 0
+      else if((a^.dato.fecha.dia = f.dia) and (a^.dato.fecha.mes = f.mes) and (a^.dato.fecha.anio = f.anio)) then
+          cantVentas := a^.dato.u_vendidas + cantVentas(a^.HI,f) + cantVentas(a^.HD,f)
+      else
+        cantVentas := cantVentas(a^.HI,f) + cantVentas(a^.HD,f);
+    end;
+  
+  var f: fechas;
+  begin
+    cargarFecha(f);
+    writeln;
+    writeln('----------------------------- Total Ventas por Fecha (ARBOL I) -----------------------------');
+    writeln;
+    writeln('El ',f.dia,'/',f.mes,'/',f.anio,' se reegistraron un total de ',cantVentas(a,f),' ventas.');
+    writeln;
+    writeln('    //////////////////////////////////////////////////////////');
+    writeln;
+  end;
+
+
+  procedure prodMaxVentas(a: arb_productos);
+
+    function masVentas(a: arb_productos): integer;
+
+      procedure obtenermax(a: arb_productos; var maxVentas,maxCod: integer);
+
+        procedure actualizarMax(p: producto; var maxVentas,maxCod: integer);
+        begin
+          if(p.totVendido > maxVentas) then begin
+            maxVentas := p.totVendido;
+            maxCod := p.codigo;
+          end;
+        end;
+
+      begin
+        if (a <> nil) then begin
+          obtenermax(a^.HI,maxVentas,maxCod);
+          actualizarMax(a^.dato,maxVentas,maxCod);
+          obtenermax(a^.HD,maxVentas,maxCod);
+        end;
+      end;
+
+
+    var maxVentas,maxCod: integer;
+    begin
+      maxVentas := -1; maxCod := 0;
+      obtenermax(a,maxVentas,maxCod);
+      masVentas := maxCod;
+    end;
+    
+  begin
+    writeln('------------------------- Producto con mayores Ventas (ARBOL II) -------------------------');
+    writeln;
+    writeLN('El producto con el codigo ',masVentas(a),' es el que tiene la mayor cantidad de unidades vendidas.');
+    writeln;
+    writeln('    //////////////////////////////////////////////////////////');
+    writeln;
+  end;
+
+
+  procedure prodMaxVentas2(a: arb_productos2);
+
+    function masVentas2(a: arb_productos2): integer;
+
+      procedure obtenermax2(a: arb_productos2; var maxVentas,maxCod: integer);
+
+        function contarVentas(l: lVentas): integer;
+        var cant: integer;
+        begin
+          cant := 0;
+          while(l <> nil) do begin
+            cant := cant + 1;
+            l := l^.sig;
+          end;
+          contarVentas := cant;
+        end;
+
+        procedure actualizarMax2(cantVentas,codigo: integer; var maxVentas,maxCod: integer);
+        begin
+          if(cantVentas > maxVentas) then begin
+            maxVentas := cantVentas;
+            maxCod := codigo;
+          end;
+        end;
+
+      begin
+        if (a <> nil) then begin
+          obtenermax2(a^.HI,maxVentas,maxCod);
+          actualizarMax2(contarVentas(a^.dato.ventas),a^.dato.codigo,maxVentas,maxCod);
+          obtenermax2(a^.HD,maxVentas,maxCod);
+        end;
+      end;
+    
+    var maxVentas,maxCod: integer;
+    begin
+      maxVentas := -1; maxCod := 0;
+      obtenermax2(a,maxVentas,maxCod);
+      masVentas2 := maxCod;
+    end;
+
+  begin
+    writeln('------------------------- Producto con mayores Ventas (ARBOL III) -------------------------');
+    writeln;
+    writeLN('El producto con el codigo ',masVentas2(a),' es quien tiene la mayor cantidad de ventas.');
+    writeln;
+    writeln('    //////////////////////////////////////////////////////////');
+    writeln;
+  end;
+
 {------------------ Programa principal ------------------}
   
   var
@@ -332,4 +464,7 @@ Const
     Randomize;
     generarArbol(a,b,c);
     imprimirArbol(a,b,c);
+    ventasPorFecha(a);
+    prodMaxVentas(b);
+    prodMaxVentas2(c);
   end.
