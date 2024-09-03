@@ -34,7 +34,7 @@ type
     mes: meses;
     anio: anios;
   end;
-
+{podria hacer un registro aluFinal que tenga legajo y un registro final}
   final = record
     leg: integer;
     codMat: integer;
