@@ -1,5 +1,11 @@
 
 
+
+
+
+
+
+
 {3. Implementar un programa que contenga:
   
   a. Un módulo que lea información de los finales rendidos por los alumnos de la Facultad de
@@ -36,24 +42,22 @@ Type
     mes: meses;
     anio: anios;
   End;
-{podria hacer un registro aluFinal que tenga legajo y un registro final}
+
   final = Record
-    leg: integer;
     codMat: integer;
     fecha: fechas;
     nota: notas;
   End;
 
-  final2 = Record
-    codMat: integer;
-    fecha: fechas;
-    nota: notas;
+  aluFinal = Record
+    leg: integer;
+    fnl: final;
   End;
 
   lFinales = ^nFinales;
 
   nFinales = Record
-    dato: final2;
+    dato: final;
     sig: lFinales;
   End;
 
@@ -70,27 +74,39 @@ Type
     HD: arbLeg;
   End;
 
+  promAlu = Record
+    leg: integer;
+    prom: real;
+  End;
+
+  lPromedios = ^nPromedios;
+
+  nPromedios = Record
+    dato: promAlu;
+    sig: lPromedios;
+  End;
+
 {modulos}
 
 Procedure generarArbol(Var a: arbLeg);
 
-Procedure leerFinal(Var f: final);
+Procedure leerAlu(Var af: aluFinal);
 Begin
-  With f Do
+  With af Do
     Begin
       leg := Random(101);
       If leg <> 0 Then
         Begin
-          codMat := Random(24) + 1;
-          fecha.dia := 1 + Random(31);
-          fecha.mes := 1 + Random(12);
-          fecha.anio := Random(maxAnio - minAnio + 1) + minAnio;
-          nota := 1 + Random(10);
+          fnl.codMat := Random(24) + 1;
+          fnl.fecha.dia := 1 + Random(31);
+          fnl.fecha.mes := 1 + Random(12);
+          fnl.fecha.anio := Random(maxAnio - minAnio + 1) + minAnio;
+          fnl.nota := 1 + Random(10);
         End;
     End;
 End;
 
-Procedure agregar(Var a: arbLeg; f: final);
+Procedure agregar(Var a: arbLeg; af: aluFinal);
 
 Procedure AgregarAdelante(Var l: lFinales; f: final);
 
@@ -104,43 +120,43 @@ Begin
   l := nue;
 End;
 
-Procedure copiarDatos(Var a: alumno; f: final);
+Procedure copiarDatos(Var a: alumno; af: aluFinal);
 Begin
-  a.leg := f.leg;
+  a.leg := af.leg;
   a.finales := Nil;
-  AgregarAdelante(a.finales,f);
+  AgregarAdelante(a.finales,af.fnl);
 End;
 
 Begin
   If (a = Nil) Then
     Begin
       new(a);
-      copiarDatos(a^.dato,f);
+      copiarDatos(a^.dato,af);
       a^.HI := Nil;
       a^.HD := Nil;
     End
   Else
     Begin
-      If (f.leg = a^.dato.leg) Then
-        AgregarAdelante(a^.dato.finales,f)
+      If (af.leg = a^.dato.leg) Then
+        AgregarAdelante(a^.dato.finales,af.fnl)
       Else
         Begin
-          If (f.leg > a^.dato.leg) Then
-            agregar(a^.HD,f)
+          If (af.leg > a^.dato.leg) Then
+            agregar(a^.HD,af)
           Else
-            agregar(a^.HI,f);
+            agregar(a^.HI,af);
         End;
     End;
 End;
 
-Var f: final;
+Var af: aluFinal;
 Begin
   a := Nil;
-  leerFinal(f);
-  While (f.leg <> 0) Do
+  leerAlu(af);
+  While (af.leg <> 0) Do
     Begin
-      agregar(a,f);
-      leerFinal(f);
+      agregar(a,af);
+      leerAlu(af);
     End;
 End;
 
@@ -151,14 +167,10 @@ Begin
 
   While (l <> Nil) Do
     Begin
-
       writeln('Materia Nro ',l^.dato.codMat,' | Fecha: ',l^.dato.fecha.dia,'/',l^.dato.fecha.mes,'/',l^.dato.fecha.anio,' | Nota obtenida: ',l^.dato.
               nota,'.');
-
       l := l^.sig;
     End;
-
-
 End;
 
 Procedure imprimirNodo(a: alumno);
@@ -213,9 +225,20 @@ Begin
     End;
 End;
 
-Procedure promediosAlu(a: arbLeg; n: real);
+Procedure promediosAlu(a: arbLeg; n: real; Var l: lPromedios);
 
-Function filtroProm(l: lFinales): real;
+Procedure agregarListaProm(Var l: lPromedios; prom: real; leg: integer);
+
+Var nue: lPromedios;
+Begin
+  new(nue);
+  nue^.dato.leg := leg;
+  nue^.dato.prom := prom;
+  nue^.sig := l;
+  l := nue;
+End;
+
+Function calcularProm(l: lFinales): real;
 
 Var totNotas,cantNotas: integer;
 Begin
@@ -227,8 +250,8 @@ Begin
       cantNotas := cantNotas + 1;
       l := l^.sig;
     End;
-  If (cantNotas > 0) Then filtroProm := totNotas / cantNotas
-  Else filtroProm := -1;
+  If (cantNotas > 0) Then calcularProm := totNotas / cantNotas
+  Else calcularProm := -1;
 End;
 
 Var prom: real;
@@ -236,10 +259,19 @@ Begin
   If (a <> Nil) Then
     Begin
       prom := 0;
-      If (a^.HI <> Nil) Then promediosAlu(a^.HI,n);
-      prom := filtroProm(a^.dato.finales);
-      If (prom >= n) Then writeln('| Legajo Nro. ',a^.dato.leg,' | Promedio: ',prom:0:2,' |');
-      If (a^.HD <> Nil) Then promediosAlu(a^.HD,n);
+      If (a^.HI <> Nil) Then promediosAlu(a^.HI,n,l);
+      prom := calcularProm(a^.dato.finales);
+      If (prom >= n) Then agregarListaProm(l,prom,a^.dato.leg);
+      If (a^.HD <> Nil) Then promediosAlu(a^.HD,n,l);
+    End;
+End;
+
+Procedure imprimirLista(l: lPromedios);
+Begin
+  While (l <> Nil) Do
+    Begin
+      writeln('| Legajo Nro. ',l^.dato.leg,' | Promedio: ',l^.dato.prom:0:2,' |');
+      l := l^.sig;
     End;
 End;
 
@@ -248,6 +280,7 @@ End;
 Var 
   a: arbLeg;
   numR: real;
+  l: lPromedios;
 Begin
   Randomize;
   generarArbol(a);
@@ -272,7 +305,9 @@ Begin
       writeln;
       writeln(' -------------------------- LISTADO DE LEGAJOS CON PROMEDIO ',numR:0:2,' O SUPERIOR --------------------------');
       writeln;
-      promediosAlu(a,numR);
+      promediosAlu(a,numR,l);
+      If (l <> Nil) Then
+        imprimirLista(l);
       writeln;
       writeln(' ////////////////////////////////////////////////////////////////      ');
       writeln;
