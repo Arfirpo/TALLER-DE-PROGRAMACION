@@ -1,3 +1,5 @@
+
+
 {3. Implementar un programa que contenga:
   
   a. Un módulo que lea información de los finales rendidos por los alumnos de la Facultad de
@@ -16,170 +18,263 @@
   d. Un módulo que reciba la estructura generada en a. y un valor real. Este módulo debe
   retornar los legajos y promedios de los alumnos cuyo promedio supera el valor ingresado.}
 
-program nombrePrograma;
+Program nombrePrograma;
 
-Const
+Const 
   minAnio = 2000;
   maxAnio = 2024;
 
-type
-  
+Type 
+
   dias = 1..31;
   meses = 1..12;
   anios = minAnio..maxAnio;
   notas = 1..10;
 
-  fechas = record
+  fechas = Record
     dia: dias;
     mes: meses;
     anio: anios;
-  end;
+  End;
 {podria hacer un registro aluFinal que tenga legajo y un registro final}
-  final = record
+  final = Record
     leg: integer;
     codMat: integer;
     fecha: fechas;
     nota: notas;
-  end;
+  End;
 
-  final2 = record
+  final2 = Record
     codMat: integer;
     fecha: fechas;
     nota: notas;
-  end;
+  End;
 
   lFinales = ^nFinales;
-  
-  nFinales = record
+
+  nFinales = Record
     dato: final2;
     sig: lFinales;
-  end;
+  End;
 
-  alumno = record
+  alumno = Record
     leg: integer;
     finales: lFinales;
-  end;
+  End;
 
   arbLeg = ^nArbLeg;
 
-  nArbLeg = record
+  nArbLeg = Record
     dato: alumno;
     HI: arbLeg;
     HD: arbLeg;
-  end;
+  End;
 
 {modulos}
 
-procedure generarArbol(var a: arbLeg);
+Procedure generarArbol(Var a: arbLeg);
 
-  procedure leerFinal(var f: final);
-  begin
-    with f do begin
+Procedure leerFinal(Var f: final);
+Begin
+  With f Do
+    Begin
       leg := Random(101);
-      if leg <> 0 then begin
-        codMat := Random(24) + 1;
-        fecha.dia := 1 + Random(31);
-        fecha.mes := 1 + Random(12);
-        fecha.anio := Random(maxAnio - minAnio + 1) + minAnio;
-        nota := 1 + Random(10);        
-      end;
-    end;
-  end;
+      If leg <> 0 Then
+        Begin
+          codMat := Random(24) + 1;
+          fecha.dia := 1 + Random(31);
+          fecha.mes := 1 + Random(12);
+          fecha.anio := Random(maxAnio - minAnio + 1) + minAnio;
+          nota := 1 + Random(10);
+        End;
+    End;
+End;
 
-  procedure agregar(var a: arbLeg; f: final);
+Procedure agregar(Var a: arbLeg; f: final);
 
-    procedure AgregarAdelante(var l: lFinales; f: final);
-    var nue: lFinales;
-    begin
-      new(nue);
-      nue^.dato.codMat := f.codMat;
-      nue^.dato.fecha := f.fecha;
-      nue^.dato.nota := f.nota;
-      nue^.sig := l;
-      l := nue;
-    end;
-    
-    procedure copiarDatos(var a: alumno; f: final);
-    begin
-      a.leg := f.leg;
-      a.finales := nil;
-      AgregarAdelante(a.finales,f);
-    end;
+Procedure AgregarAdelante(Var l: lFinales; f: final);
 
-  begin
-    if (a = nil) then begin
+Var nue: lFinales;
+Begin
+  new(nue);
+  nue^.dato.codMat := f.codMat;
+  nue^.dato.fecha := f.fecha;
+  nue^.dato.nota := f.nota;
+  nue^.sig := l;
+  l := nue;
+End;
+
+Procedure copiarDatos(Var a: alumno; f: final);
+Begin
+  a.leg := f.leg;
+  a.finales := Nil;
+  AgregarAdelante(a.finales,f);
+End;
+
+Begin
+  If (a = Nil) Then
+    Begin
       new(a);
       copiarDatos(a^.dato,f);
-      a^.HI := nil;
-      a^.HD := nil;
-    end
-    else begin
-      if(f.leg = a^.dato.leg) then
+      a^.HI := Nil;
+      a^.HD := Nil;
+    End
+  Else
+    Begin
+      If (f.leg = a^.dato.leg) Then
         AgregarAdelante(a^.dato.finales,f)
-      else begin
-        if (f.leg > a^.dato.leg) then
-          agregar(a^.HD,f)
-        else
-          agregar(a^.HI,f);
-      end;      
-    end;
-  end;
-var f: final;
-begin
-  a := nil;
+      Else
+        Begin
+          If (f.leg > a^.dato.leg) Then
+            agregar(a^.HD,f)
+          Else
+            agregar(a^.HI,f);
+        End;
+    End;
+End;
+
+Var f: final;
+Begin
+  a := Nil;
   leerFinal(f);
-  while(f.leg <> 0) do begin
-    agregar(a,f);
-    leerFinal(f);
-  end;
-end;
+  While (f.leg <> 0) Do
+    Begin
+      agregar(a,f);
+      leerFinal(f);
+    End;
+End;
 
-procedure imprimirArbol(a: arbLeg);
+Procedure imprimirArbol(a: arbLeg);
 
-  procedure imprimirListaFinales(l: lFinales);
-  begin
-    
-    while(l <> nil) do begin
-      
-      writeln('Materia Nro ',l^.dato.codMat,' | Fecha: ',l^.dato.fecha.dia,'/',l^.dato.fecha.mes,'/',l^.dato.fecha.anio,' | Nota obtenida: ',l^.dato.nota,'.');
-      
+Procedure imprimirListaFinales(l: lFinales);
+Begin
+
+  While (l <> Nil) Do
+    Begin
+
+      writeln('Materia Nro ',l^.dato.codMat,' | Fecha: ',l^.dato.fecha.dia,'/',l^.dato.fecha.mes,'/',l^.dato.fecha.anio,' | Nota obtenida: ',l^.dato.
+              nota,'.');
+
       l := l^.sig;
-    end;
-    
-    
-  end;
+    End;
 
-  procedure imprimirNodo(a: alumno);
-  begin
-    writeln;
-    writeln('-----------------------------------------------------');
-    writeln('|  Finales rendidos por el Alumno Legajo Nro: ',a.leg,'.  |');
-    writeln('-----------------------------------------------------');
-    writeln;
-    imprimirListaFinales(a.finales);
-  end;
 
-begin
-  if (a <> nil) then begin
-    if(a^.HI <> nil) then
-      imprimirArbol(a^.HI);
-    imprimirNodo(a^.dato);
-    if( a^.HD <> nil) then
-      imprimirArbol(a^.HD);
-  end;
-end;
+End;
+
+Procedure imprimirNodo(a: alumno);
+Begin
+  writeln;
+  writeln('-----------------------------------------------------');
+  writeln('|  Finales rendidos por el Alumno Legajo Nro: ',a.leg,'.  |');
+  writeln('-----------------------------------------------------');
+  writeln;
+  imprimirListaFinales(a.finales);
+End;
+
+Begin
+  If (a <> Nil) Then
+    Begin
+      If (a^.HI <> Nil) Then
+        imprimirArbol(a^.HI);
+      imprimirNodo(a^.dato);
+      If ( a^.HD <> Nil) Then
+        imprimirArbol(a^.HD);
+    End;
+End;
+
+Function legajosImpares(a: arbLeg): integer;
+Begin
+  If (a = Nil) Then legajosImpares := 0
+  Else If (a^.dato.leg Mod 2 = 1) Then legajosImpares := legajosImpares(a^.HI) + 1 + legajosImpares(a^.HD)
+  Else legajosImpares := legajosImpares(a^.HI) + legajosImpares(a^.HD);
+End;
+
+Procedure finalesAprobados(a: arbLeg);
+
+Function cantFinales(l: lFinales): integer;
+
+Var cant: integer;
+Begin
+  cant := 0;
+  While (l <> Nil) Do
+    Begin
+      If (l^.dato.nota >= 4) Then cant := cant + 1;
+      l := l^.sig;
+    End;
+  cantFinales := cant;
+End;
+
+Begin
+  If (a <> Nil) Then
+    Begin
+      If (a^.HI <> Nil) Then finalesAprobados(a^.HI);
+      writeln('La cantidad de finales aprobados por el alumno con legajo ',a^.dato.leg,' es: ',cantFinales(a^.dato.finales));
+      If (a^.HD <> Nil) Then finalesAprobados(a^.HD);
+    End;
+End;
+
+Procedure promediosAlu(a: arbLeg; n: real);
+
+Function filtroProm(l: lFinales): real;
+
+Var totNotas,cantNotas: integer;
+Begin
+  totNotas := 0;
+  cantNotas := 0;
+  While (l <> Nil) Do
+    Begin
+      totNotas := totNotas + l^.dato.nota;
+      cantNotas := cantNotas + 1;
+      l := l^.sig;
+    End;
+  If (cantNotas > 0) Then filtroProm := totNotas / cantNotas
+  Else filtroProm := -1;
+End;
+
+Var prom: real;
+Begin
+  If (a <> Nil) Then
+    Begin
+      prom := 0;
+      If (a^.HI <> Nil) Then promediosAlu(a^.HI,n);
+      prom := filtroProm(a^.dato.finales);
+      If (prom >= n) Then writeln('| Legajo Nro. ',a^.dato.leg,' | Promedio: ',prom:0:2,' |');
+      If (a^.HD <> Nil) Then promediosAlu(a^.HD,n);
+    End;
+End;
 
 {Programa principal}
-var
+
+Var 
   a: arbLeg;
-begin
+  numR: real;
+Begin
   Randomize;
   generarArbol(a);
-  if (a <> nil) then begin
-    writeln;
-    writeln(' --------------------------ARBOL DE LEGAJOS --------------------------');
-    imprimirArbol(a);
-    writeln;    
-  end;
-    
-end.
+  If (a <> Nil) Then
+    Begin
+      writeln;
+      writeln(' -------------------------- ARBOL DE LEGAJOS --------------------------');
+      imprimirArbol(a);
+      writeln;
+      writeln(' ////////////////////////////////////////////////////////////////      ');
+      writeln;
+      writeln('La cantidad de legajos impares es: ',legajosImpares(a));
+      writeln;
+      writeln(' ////////////////////////////////////////////////////////////////      ');
+      writeln;
+      finalesAprobados(a);
+      writeln;
+      writeln(' ////////////////////////////////////////////////////////////////      ');
+      writeln;
+      write('Ingrese un promedio: ');
+      readln(numR);
+      writeln;
+      writeln(' -------------------------- LISTADO DE LEGAJOS CON PROMEDIO ',numR:0:2,' O SUPERIOR --------------------------');
+      writeln;
+      promediosAlu(a,numR);
+      writeln;
+      writeln(' ////////////////////////////////////////////////////////////////      ');
+      writeln;
+    End;
+End.
