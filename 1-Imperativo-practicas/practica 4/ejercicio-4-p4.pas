@@ -56,7 +56,8 @@ type
     sig: lPrestamos;
   end;
 
-  ISBN = record
+  libro = record
+    isbn: integer
     prestamos: lPrestamos;
   end;
 
@@ -67,19 +68,72 @@ type
     HD: arbPrestamos;
   end;
 
-  arbISBN = ^nArbISBN;
-  nArbISBN = record
-    dato: ISBN;
+  arbLibros = ^nArbLibros;
+  nArbLibros = record
+    dato: libro;
     HI: arbPrestamos;
     HD: arbPrestamos;
   end;
 
-type
-  {Tipos}
+procedure generarArboles(var a: arbPrestamos; var b: arbISBN);
 
-var
-  {Variables}
+  procedure leerPrestamos(var p: prestamo);
+  begin
+    with p do begin
+      isbn := Random(101);
+      if(isbn <> 0) then begin
+        codS := 1 + Random(100);
+        fecha.dia := 1 + Random(31);
+        fecha.mes := 1 + Random(12);
+        diasPrestamo := 1 + (365);
+      end;
+    end;
+  end;
 
+  procedure generarArbolPrestamos(var a: arbPrestamos; p: prestamo);
+  begin
+    if(a = nil) then begin
+      a^.dato := p;
+      a^.HI := nil;
+      a^.HD := nil;
+    end
+    else begin
+      
+    end;
+  end;
+
+  procedure generarArbolLibros(var b: arbLibros; p: prestamo);
+
+    procedure generarListaPrestamos(l: lPrestamos);
+
+  begin
+    if(b = nil) then begin
+      generarListaPrestamos(b^.dato.prestamos,p);
+      b^.HI := nil;
+      b^.HD := nil;
+    end
+    else begin
+      
+    end;
+  end;
+
+var p:prestamo;
 begin
-  {Programa principal}
+  a := nil;
+  b := nil;
+  leerPrestamos(p);
+  while (p.isbn <> 0) do begin
+    generarArbolPrestamos(a,p);
+    generarArbolLibros(b,p);
+    leerPrestamos(p);
+  end;
+end;
+
+{Programa principal}
+var
+  a: arbPrestamos;
+  b: arbLibros;
+begin
+  Randomize;
+  generarArboles(a,b);
 end.
