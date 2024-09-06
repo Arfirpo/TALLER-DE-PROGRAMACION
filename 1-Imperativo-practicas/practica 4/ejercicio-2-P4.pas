@@ -149,17 +149,25 @@ begin
   writeln('---------------- Informar Numero de Socio Mas grande -------->');
   writeln;
   writeln('El numero de socio mas grande es: ',obtenerMasxSocio(a));
-  writeln;
 end;
 
 
 {Informar los datos del socio con el número de socio más chico. Debe invocar a un
 módulo recursivo que retorne dicho socio.}
 procedure informarDatosSocioNumMin(a: arbol);
+
+  procedure datosSocioMin(a: arbol);
+  begin
+    if(a <> nil) then
+      if(a^.HI = nil) then writeln('| Socio Nro: ',a^.dato.Numero,' | Nombre: ',a^.dato.nombre,' | Edad: ',a^.dato.edad)
+      else datosSocioMin(a^.HI);
+  end;
+
 begin
-  if(a <> nil) then
-    if(a^.HI = nil) then writeln('| Socio Nro: ',a^.dato.Numero,' | Nombre: ',a^.dato.nombre,' | Edad: ',a^.dato.edad)
-    else informarDatosSocioNumMin(a^.HI);
+  writeln;
+  writeln('-------------------- Informar datos Socio con menor numero --------->');
+  writeln;
+  datosSocioMin(a);
 end;
 
 {Leer un valor entero e informar si existe o no existe un socio con ese valor. Debe
@@ -184,22 +192,49 @@ begin
   write('Ingresar Numero a buscar: ');
   readln(num);
   writeln;
-  writeln;
   if(buscarNumeroSoc(a,num)) then
     writeln('El numero de socio ingresado existe.')
   else
     writeln('El numero de socio ingresado no existe.');
   writeln;
-  writeln;
 end;
-
-
 
 {Leer e informar la cantidad de socios cuyos códigos se encuentran comprendidos
 entre los valores leídos. Debe invocar a un módulo recursivo que reciba los valores
 leídos y retorne la cantidad solicitada.}
 
+procedure cantidadEntreRango(a: arbol);
 
+  function sumaRango(a: arbol; inf,sup: integer): integer;
+  begin
+    if(a <> nil) then begin
+      if((a^.dato.numero > inf) and (a^.dato.numero < sup)) then
+        sumaRango := sumaRango(a^.HI,inf,sup) + 1 + sumaRango(a^.HD,inf,sup)
+      else begin
+        if (a^.dato.numero <= inf) then sumaRango := sumaRango(a^.HD,inf,sup)
+        else if (a^.dato.numero >= sup) then sumaRango := sumaRango(a^.HI,inf,sup);
+      end;
+    end;
+  end;
+var num1,num2: integer;
+begin
+  writeln;
+  writeln('------------------ Informar Cantidad de Numeros de Socio dentro del Rango establecido ----------->');
+  writeln;
+  repeat
+    write('Ingrese numero 1: ');
+    readln(num1);
+    write('Ingrese numero 2: ');
+    readln(num2);
+  until (num1 < num2) or (num2 < num1);
+    if(num1 < num2) then
+      writeln('La cantidad de socios cuyo numero se encuentra dentro del rango es: ',sumaRango(a,num1,num2))
+    else if(num2 < num1) then
+      writeln('La cantidad de socios cuyo numero se encuentra dentro del rango: ',sumaRango(a,num2,num1))
+    else
+      writeln('No existen numeros de socio dentro del rango ingresado.');
+  writeln;
+end;
 
 {Programa Principal}
 Var a: arbol;
@@ -208,15 +243,9 @@ Begin
   GenerarArbol (a);
   InformarSociosOrdenCreciente (a);
   writeln;
-  writeln;
   informarNumeroSocioMax(a);
-  writeln;
-  writeln;
-  writeln('-------------------- Informar datos Socio con menor numero --------->');
-  writeln;
-  writeln;
   informarDatosSocioNumMin(a);
   writeln;
-  writeln;
   existeNumSocio(a);
+  cantidadEntreRango(a);
 End.
