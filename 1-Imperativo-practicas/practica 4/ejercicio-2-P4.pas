@@ -108,101 +108,6 @@ Begin
   writeln;
 End;
 
-{ Informar los datos de los socios en orden decreciente. }
-
-procedure InformarSociosOrdenDecreciente(a: arbol);
-
-  Procedure InformarDatosSociosOrdenDecreciente (a: arbol);
-    Begin
-      If (a^.HD <> Nil)Then
-        InformarDatosSociosOrdenDecreciente (a^.HD);
-      writeln ('Numero: ', a^.dato.numero, ' Nombre: ', a^.dato.nombre, ' Edad: ', a^.dato.edad);
-      If (a^.HI <> Nil)Then
-        InformarDatosSociosOrdenDecreciente (a^.HI);
-    End;
-begin
-  if(a <> nil) then begin
-    writeln;
-    writeln ('----- Socios en orden decreciente por numero de socio ----->');
-    writeln;
-    InformarDatosSociosOrdenDecreciente (a);
-    end
-    else 
-      write('El arbol esta vacio.');
-  writeln;
-  writeln('//////////////////////////////////////////////////////////');
-  writeln;
-end;
-
-{ Informar el numero de socio con mayor edad. Debe invocar a un modulo recursivo que retorne dicho valor.  }
-Procedure InformarNumeroSocioConMasEdad (a: arbol);
-
-  Procedure actualizarMaximo(Var maxValor,maxElem : integer; nuevoValor, nuevoElem : integer);
-  Begin
-    If (nuevoValor >= maxValor) Then
-      Begin
-        maxValor := nuevoValor;
-        maxElem := nuevoElem;
-      End;
-  End;
-
-  Procedure NumeroMasEdad (a: arbol; Var maxEdad: integer; Var maxNum: integer);
-  Begin
-    If (a <> Nil) Then
-      Begin
-        actualizarMaximo(maxEdad,maxNum,a^.dato.edad,a^.dato.numero);
-        numeroMasEdad(a^.hi, maxEdad,maxNum);
-        numeroMasEdad(a^.hd, maxEdad,maxNum);
-      End;
-  End;
-
-Var maxEdad, maxNum: integer;
-Begin
-  writeln;
-  writeln ('----- Informar Numero Socio Con Mas Edad ----->');
-  writeln;
-  maxEdad := -1;
-  NumeroMasEdad (a, maxEdad, maxNum);
-  If (maxEdad = -1)
-    Then writeln ('Arbol sin elementos')
-  Else
-    Begin
-      writeln;
-      writeln ('Numero de socio con mas edad: ', maxNum);
-      writeln;
-    End;
-  writeln;
-  writeln ('//////////////////////////////////////////////////////////');
-  writeln;
-End;
-
-{Aumentar en 1 la edad de los socios con edad impar e informar la cantidad de socios que se les aumento la edad.}
-Procedure AumentarEdadNumeroImpar (a: arbol);
-
-  Function AumentarEdad (a: arbol): integer;
-  Var resto: integer;
-  Begin
-    If (a = Nil)
-      Then AumentarEdad := 0
-    Else
-      Begin
-        resto := a^.dato.edad Mod 2;
-        If (resto = 1) Then a^.dato.edad := a^.dato.edad + 1;
-        AumentarEdad := resto + AumentarEdad (a^.HI) + AumentarEdad (a^.HD);
-      End;
-  End;
-
-Begin
-  writeln;
-  writeln ('----- Cantidad de socios con edad aumentada ----->');
-  writeln;
-  writeln ('Cantidad: ', AumentarEdad (a));
-  writeln;
-  writeln;
-  writeln ('//////////////////////////////////////////////////////////');
-  writeln;
-End;
-
 {Leer un nombre e informar si existe o no existe un socio con ese nombre. Debe invocar a un módulo recursivo que reciba el nombre leído y retorne verdadero o falso.}
 
 Function InformarExistenciaNombreSocio(a: arbol): boolean;
@@ -226,26 +131,9 @@ begin
   InformarExistenciaNombreSocio := buscarSocioRecursiva(a,nom);
 end;
 
-function InformarCantidadSocios(a: arbol): integer;
-begin
-  if (a = nil) then InformarCantidadSocios := 0
-  else
-    InformarCantidadSocios := InformarCantidadSocios(a^.HI) + 1 + InformarCantidadSocios(a^.HD);
-end;
 
-function InformarPromedioDeEdad(a: arbol): real;
-
-  function sumaEdadRecursiva(a: arbol): integer;
-  begin
-    if(a = nil) then sumaEdadRecursiva := 0
-    else
-      sumaEdadRecursiva := sumaEdadRecursiva(a^.HI) + a^.dato.edad + sumaEdadRecursiva(a^.HD);
-  end;
-
-begin
-  InformarPromedioDeEdad := sumaEdadRecursiva(a);
-end;
-
+{Informar el número de socio más grande. Debe invocar a un módulo recursivo que
+retorne dicho valor.}
 procedure informarNumeroSocioMax(a: arbol);
 
   function obtenerMasxSocio(a: arbol): integer;
@@ -262,35 +150,73 @@ begin
   writeln;
   writeln('El numero de socio mas grande es: ',obtenerMasxSocio(a));
   writeln;
-  writeln ('//////////////////////////////////////////////////////////');
+end;
+
+
+{Informar los datos del socio con el número de socio más chico. Debe invocar a un
+módulo recursivo que retorne dicho socio.}
+procedure informarDatosSocioNumMin(a: arbol);
+begin
+  if(a <> nil) then
+    if(a^.HI = nil) then writeln('| Socio Nro: ',a^.dato.Numero,' | Nombre: ',a^.dato.nombre,' | Edad: ',a^.dato.edad)
+    else informarDatosSocioNumMin(a^.HI);
+end;
+
+{Leer un valor entero e informar si existe o no existe un socio con ese valor. Debe
+invocar a un módulo recursivo que reciba el valor leído y retornar verdadero o falso.}
+procedure existeNumSocio(a: arbol);
+
+  function buscarNumeroSoc(a: arbol; n: integer): boolean;
+  begin
+    if (a = nil) then 
+      buscarNumeroSoc := false
+    else begin
+      if(a^.dato.numero = n) then buscarNumeroSoc := true
+      else if (a^.dato.numero > n) then buscarNumeroSoc := buscarNumeroSoc(a^.HI,n)
+      else buscarNumeroSoc := buscarNumeroSoc(a^.HD,n)
+    end;
+  end;
+
+var num: integer;
+begin
+  writeln('------------------ Informar Existencia de Numero de Socio ----------->');
+  writeln;
+  write('Ingresar Numero a buscar: ');
+  readln(num);
+  writeln;
+  writeln;
+  if(buscarNumeroSoc(a,num)) then
+    writeln('El numero de socio ingresado existe.')
+  else
+    writeln('El numero de socio ingresado no existe.');
+  writeln;
   writeln;
 end;
 
 
+
+{Leer e informar la cantidad de socios cuyos códigos se encuentran comprendidos
+entre los valores leídos. Debe invocar a un módulo recursivo que reciba los valores
+leídos y retorne la cantidad solicitada.}
+
+
+
 {Programa Principal}
-Var a: arbol; cantSocios: integer;
+Var a: arbol;
 Begin
   randomize;
   GenerarArbol (a);
   InformarSociosOrdenCreciente (a);
-  InformarSociosOrdenDecreciente (a);
-  InformarNumeroSocioConMasEdad (a);
-  // AumentarEdadNumeroImpar (a);
-  //writeln;
-  // if(InformarExistenciaNombreSocio (a)) then writeln('El socio existe.')
-  // else writeln('El socio no existe.');
-  // writeln;
-  // writeln ('//////////////////////////////////////////////////////////');
   writeln;
-  cantSocios := InformarCantidadSocios (a);
-  write('La cantidad de socios es de: ');
-  writeln(cantSocios); 
   writeln;
-  // writeln ('//////////////////////////////////////////////////////////');
-  // writeln;
-  // write('El promedio de edad de los socios es de: ');
-  // writeln((InformarPromedioDeEdad (a) / cantSocios):0:2);
-  // writeln;
-  // writeln ('//////////////////////////////////////////////////////////');
   informarNumeroSocioMax(a);
+  writeln;
+  writeln;
+  writeln('-------------------- Informar datos Socio con menor numero --------->');
+  writeln;
+  writeln;
+  informarDatosSocioNumMin(a);
+  writeln;
+  writeln;
+  existeNumSocio(a);
 End.
