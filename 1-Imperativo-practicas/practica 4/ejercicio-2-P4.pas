@@ -214,25 +214,28 @@ procedure cantidadEntreRango(a: arbol);
         if (a^.dato.numero <= inf) then sumaRango := sumaRango(a^.HD,inf,sup)
         else if (a^.dato.numero >= sup) then sumaRango := sumaRango(a^.HI,inf,sup);
       end;
-    end;
+    end
+    else sumaRango := 0;
   end;
+
 var num1,num2: integer;
 begin
   writeln;
   writeln('------------------ Informar Cantidad de Numeros de Socio dentro del Rango establecido ----------->');
   writeln;
   repeat
+    writeln;
     write('Ingrese numero 1: ');
     readln(num1);
     write('Ingrese numero 2: ');
     readln(num2);
-  until (num1 < num2) or (num2 < num1);
-    if(num1 < num2) then
-      writeln('La cantidad de socios cuyo numero se encuentra dentro del rango es: ',sumaRango(a,num1,num2))
-    else if(num2 < num1) then
-      writeln('La cantidad de socios cuyo numero se encuentra dentro del rango: ',sumaRango(a,num2,num1))
-    else
-      writeln('No existen numeros de socio dentro del rango ingresado.');
+  until (num1 <> num2);
+  writeln;
+  if(num1 < num2) then
+    writeln('La cantidad de socios cuyo numero se encuentra dentro del rango es: ',sumaRango(a,num1,num2))
+  else
+    writeln('La cantidad de socios cuyo numero se encuentra dentro del rango: ',sumaRango(a,num2,num1));
+  writeln;
   writeln;
 end;
 
