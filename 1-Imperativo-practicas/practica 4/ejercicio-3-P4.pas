@@ -169,6 +169,40 @@ begin
   writeln;
 end;
 
+procedure entreRangos(a: arbProd);
+
+  function contarEntreRangos(a: arbProd; inf,sup: integer): real;
+  begin
+    if(a <> nil) then begin
+      if((a^.dato.codP > inf) and (a^.dato.codP < sup)) then
+        contarEntreRangos :=  a^.dato.montoTot +  contarEntreRangos(a^.HI,inf,sup) + contarEntreRangos(a^.HD,inf,sup)
+      else if (a^.dato.codP >= sup) then contarEntreRangos := contarEntreRangos(a^.HI,inf,sup)
+      else 
+        contarEntreRangos := contarEntreRangos(a^.HD,inf,sup);
+    end
+    else 
+      contarEntreRangos := 0;
+  end;
+
+var num1,num2: integer;
+begin
+  writeln;
+  writeln('--------------- Informar monto total de Productos con codigo dentro del rango de valores ingresados ------->');
+  repeat
+    writeln;
+    write('Ingrese un numero: ');
+    readln(num1);
+    write('Ingrese otro numero: ');
+    readln(num2);
+  until(num1 <> num2);
+  writeln;
+  if(num1 < num2) then
+    writeln('El monto total de los productos que se encuentran dentro del rango seleccionado es de: $ ',contarEntreRangos(a,num1,num2):0:2)
+  else
+    writeln('El monto total de los productos que se encuentran dentro del rango seleccionado es de: $ ',contarEntreRangos(a,num2,num1):0:2);
+end;
+
+
 {Programa Principal}
 var
   a: arbProd;
@@ -179,4 +213,5 @@ begin
   imprimirArbolProd(a);
   maxUnidadesVendidas(a);
   codigosMenores(a);
+  entreRangos(a);
 end.
