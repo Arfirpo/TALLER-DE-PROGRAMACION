@@ -231,7 +231,7 @@ begin
 end;
 
 procedure cantPrestamosSocio(a: arbPrestamos);
-
+var
   function sumaPrestamos(a: arbPrestamos; n: integer): integer;
   begin
     if(a <> nil) then begin
@@ -466,10 +466,10 @@ begin
   generarListaLibros2(b);
   
   // Imprimir y otras operaciones
-{  codigoLibroMasGrande(a);
+  codigoLibroMasGrande(a);
   codigoLibroMasChico(b);
   cantPrestamosSocio(a);
   cantPrestamosSocio2(b);
   prestamosEntreRangos(a);
-  prestamosEntreRangos2(b);}
+  prestamosEntreRangos2(b);
 end.
