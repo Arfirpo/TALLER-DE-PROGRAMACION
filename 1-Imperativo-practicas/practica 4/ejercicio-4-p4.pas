@@ -6,10 +6,10 @@ Implementar un programa con:
   a. Un módulo que lea préstamos y retorne 2 estructuras de datos con la información de
   los préstamos. La lectura de los préstamos finaliza con ISBN 0. Las estructuras deben
   ser eficientes para buscar por ISBN.
-  i. En una estructura cada préstamo debe estar en un nodo. Los ISBN repetidos
-  insertarlos a la derecha.
-  ii. En otra estructura, cada nodo debe contener todos los préstamos realizados al ISBN.
-  (prestar atención sobre los datos que se almacenan).
+    i. En una estructura cada préstamo debe estar en un nodo. Los ISBN repetidos
+    insertarlos a la derecha.
+    ii. En otra estructura, cada nodo debe contener todos los préstamos realizados al ISBN.
+    (prestar atención sobre los datos que se almacenan).
   b. Un módulo recursivo que reciba la estructura generada en i. y retorne el ISBN más
   grande.
   c. Un módulo recursivo que reciba la estructura generada en ii. y retorne el ISBN más
@@ -43,21 +43,26 @@ type
     dia: dias;
     mes: meses;
   end;
-  prestamo = record
-    isbn: integer;
+
+  prestamo2 = record
     codS: integer;
     fecha: fechas;
     diasPrestamo: integer;
   end;
 
+  prestamo = record
+    isbn: integer;
+    datPrest: prestamo2
+  end;
+
   lPrestamos = ^nPrestamos;
   nPrestamos = record
-    dato: prestamo;
+    dato: prestamo2;
     sig: lPrestamos;
   end;
 
   libro = record
-    isbn: integer
+    isbn: integer;
     prestamos: lPrestamos;
   end;
 
@@ -71,21 +76,21 @@ type
   arbLibros = ^nArbLibros;
   nArbLibros = record
     dato: libro;
-    HI: arbPrestamos;
-    HD: arbPrestamos;
+    HI: arbLibros;
+    HD: arbLibros;
   end;
 
-procedure generarArboles(var a: arbPrestamos; var b: arbISBN);
+procedure generarArboles(var a: arbPrestamos; var b: arbLibros);
 
   procedure leerPrestamos(var p: prestamo);
   begin
     with p do begin
-      isbn := Random(101);
+      isbn := Random(51);
       if(isbn <> 0) then begin
-        codS := 1 + Random(100);
-        fecha.dia := 1 + Random(31);
-        fecha.mes := 1 + Random(12);
-        diasPrestamo := 1 + (365);
+        datPrest.codS := 1 + Random(50);
+        datPrest.fecha.dia := 1 + Random(31);
+        datPrest.fecha.mes := 1 + Random(12);
+        datPrest.diasPrestamo := 1 + Random(365);
       end;
     end;
   end;
@@ -93,27 +98,53 @@ procedure generarArboles(var a: arbPrestamos; var b: arbISBN);
   procedure generarArbolPrestamos(var a: arbPrestamos; p: prestamo);
   begin
     if(a = nil) then begin
+      new(a);
       a^.dato := p;
       a^.HI := nil;
       a^.HD := nil;
     end
     else begin
-      
+      if(a <> nil) then begin
+        if(p.isbn < a^.dato.isbn) then generarArbolPrestamos(a^.HI,p)
+        else generarArbolPrestamos(a^.HD,p);
+      end;
     end;
   end;
 
   procedure generarArbolLibros(var b: arbLibros; p: prestamo);
 
-    procedure generarListaPrestamos(l: lPrestamos);
+    procedure inicializarLista(var l: lPrestamos);
+    begin
+      l := nil;
+    end;
+
+    procedure agregarNodoLista(var l: lPrestamos; p: prestamo2);
+    var nue: lPrestamos;
+    begin
+      new(nue);
+      nue^.dato := p;
+      nue^.sig := l;
+      l := nue;
+    end;
 
   begin
     if(b = nil) then begin
-      generarListaPrestamos(b^.dato.prestamos,p);
+      new(b);
+      b^.dato.isbn := p.isbn;
+      inicializarLista(b^.dato.prestamos);
+      agregarNodoLista(b^.dato.prestamos,p.datPrest);
       b^.HI := nil;
       b^.HD := nil;
     end
     else begin
-      
+      if(p.isbn = b^.dato.isbn) then begin
+        b^.dato.isbn := p.isbn;
+        agregarNodoLista(b^.dato.prestamos,p.datPrest);
+      end
+      else begin
+        if(p.isbn > b^.dato.isbn) then generarArbolLibros(b^.HD,p)
+        else generarArbolLibros(b^.HI,p);
+      end;
     end;
   end;
 
@@ -129,6 +160,134 @@ begin
   end;
 end;
 
+procedure imprimirArboles(a: arbPrestamos; b: arbLibros);
+
+  procedure imprimirArbolPrestamos(a: arbPrestamos);
+  begin
+    if(a <> nil) then begin
+      if(a^.HI <> nil) then imprimirArbolPrestamos(a^.HI);
+      writeln('| ISBN del Libro: ',a^.dato.isbn,' | Nro. de Socio: ',a^.dato.datPrest.codS,' | Fecha de Prestamo: ',a^.dato.datPrest.fecha.dia,'/',a^.dato.datPrest.fecha.mes,' | Dias de Prestamo: ',a^.dato.datPrest.diasPrestamo);
+      if(a^.HD <> nil) then imprimirArbolPrestamos(a^.HD);
+    end;
+  end;
+
+  procedure imprimirArbolLibros(b: arbLibros);
+
+  procedure imprimirPrestamos(l: lPrestamos);
+  begin
+    while(l <> nil) do begin
+      writeln('| Nro. de Socio: ',l^.dato.codS,' | Fecha de Prestamo: ',l^.dato.fecha.dia,'/',l^.dato.fecha.mes,' | Dias de Prestamo: ',l^.dato.diasPrestamo);
+      l := l^.sig;
+    end;
+  end;
+
+  begin
+    if(b <> nil) then begin
+      if(b^.HI <> nil) then imprimirArbolLibros(b^.HI);
+      if(b^.dato.prestamos <> nil) then begin
+        writeln('------------------------------------');
+        writeln('ISBN Nro. ',b^.dato.isbn,' - Listado de prestamos: ');
+        writeln('------------------------------------');
+        writeln;
+        imprimirPrestamos(b^.dato.prestamos);
+        writeln;        
+      end
+      else begin
+        writeln('------------------------------------------------------------');
+        writeln('El libro con ISBN Nro. ',b^.dato.isbn,' no registra prestamos a la fecha.');
+        writeln('------------------------------------------------------------');
+        writeln;
+      end;
+      if(b^.HD <> nil) then imprimirArbolLibros(b^.HD);
+    end;
+  end;
+
+begin
+  writeln;
+  writeln('------------------------------ ARBOL DE PRESTAMOS ------------------------------');
+  writeln;
+  writeln('----------------------- Informar prestamos ordenados por ISBN ----------------->');
+  writeln;
+  imprimirArbolPrestamos(a);
+  writeln;
+  writeln('     /////////////////////////////////////////////////////////////////////////////////');
+  writeln;
+  writeln('------------------------------ ARBOL DE LIBROS ------------------------------');
+  writeln;
+  writeln('----------------------- Informar Libros (y sus prestamos) ordenados por ISBN ----------------->');
+  writeln;
+  imprimirArbolLibros(b);
+  writeln;
+  writeln('     /////////////////////////////////////////////////////////////////////////////////');
+  writeln;
+end;
+
+procedure codigoLibroMasGrande(a: arbPrestamos);
+
+  function CodLibroMax(a: arbPrestamos): integer;
+begin
+  if(a = nil) then
+    CodLibroMax := 0
+  else if(a^.HD = nil) then
+    CodLibroMax := a^.dato.isbn
+  else
+    CodLibroMax := CodLibroMax(a^.HD);
+end;
+
+begin
+  writeln('----------------------- Informar ISBN mas grande ----------------->');
+  writeln;
+  writeln('El ISBN mas grande es el Nro. ',CodLibroMax(a));
+  writeln;
+end;
+
+procedure codigoLibroMasChico(b: arbLibros);
+
+  function CodLibroMin(b: arbLibros): integer;
+  begin
+    if(b = nil) then
+      CodLibroMin := 0
+    else if(b^.HI = nil) then
+      CodLibroMin := b^.dato.isbn
+    else
+      CodLibroMin := CodLibroMin(b^.HI);
+  end;
+
+begin
+  writeln('----------------------- Informar ISBN mas chico ----------------->');
+  writeln;
+  writeln('El ISBN mas chico es el Nro. ',CodLibroMin(b));
+  writeln;
+end;
+
+procedure cantPrestamosSocio(a: arbPrestamos);
+
+  function sumaPrestamos(a: arbPrestamos; n: integer): integer;
+  begin
+    if( a <> nil) then begin
+      if (n = a^.dato.datPrest.codS) then 
+        sumaPrestamos := 1 + sumaPrestamos(a^.HI,n) + sumaPrestamos(a^.HD,n)
+      else sumaPrestamos := sumaPrestamos(a^.HI,n) + sumaPrestamos(a^.HD,n);
+    end
+    else
+      sumaPrestamos := 0;
+  end;
+
+var numSocio: integer; cant: integer;
+begin
+  cant := 0;
+  writeln('----------------------- Informar Cantidad de Prestamos Por Nro. de Socio Seleccionado ----------------->');
+  writeln;
+  write('Ingrese Nro. de Socio: ');
+  readln(numSocio);
+  cant := sumaPrestamos(a,numSocio);
+  if(cant > 0) then
+    writeln('El socio Nro. ',numSocio,' realizo ',cant,' prestamos.')
+  else
+    writeln('El socio Nro. ',numSocio,' no existe.');
+  writeln;
+end;
+
 {Programa principal}
 var
   a: arbPrestamos;
@@ -136,4 +295,8 @@ var
 begin
   Randomize;
   generarArboles(a,b);
+  imprimirArboles(a,b);
+  codigoLibroMasGrande(a);
+  codigoLibroMasChico(b);
+  cantPrestamosSocio(a);
 end.
