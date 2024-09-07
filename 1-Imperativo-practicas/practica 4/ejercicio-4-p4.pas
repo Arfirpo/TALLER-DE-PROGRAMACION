@@ -66,6 +66,11 @@ type
     prestamos: lPrestamos;
   end;
 
+  libro2 = record
+    isbn: integer;
+    cantPrestamos: integer;
+  end;
+
   arbPrestamos = ^nArbPrestamos;
   nArbPrestamos = record
     dato: prestamo;
@@ -78,6 +83,12 @@ type
     dato: libro;
     HI: arbLibros;
     HD: arbLibros;
+  end;
+
+  lLibros = ^nLibros;
+  nLibros = record
+    dato: libro2;
+    sig: lLibros;
   end;
 
 procedure generarArboles(var a: arbPrestamos; var b: arbLibros);
@@ -280,12 +291,227 @@ begin
   writeln;
   write('Ingrese Nro. de Socio: ');
   readln(numSocio);
+  writeln;
   cant := sumaPrestamos(a,numSocio);
   if(cant > 0) then
     writeln('El socio Nro. ',numSocio,' realizo ',cant,' prestamos.')
   else
     writeln('El socio Nro. ',numSocio,' no existe.');
   writeln;
+end;
+
+procedure cantPrestamosSocio2(b: arbLibros);
+
+  function sumaPrestamos2(b: arbLibros; n: integer): integer;
+
+    function contadorPrestamos(l: lPrestamos; n: integer): integer;
+    var contador: integer;
+    begin
+      contador := 0;
+      while(l <> nil) do begin
+        if(n = l^.dato.codS) then
+          contador := contador + 1;
+        l := l^.sig;
+      end;
+      contadorPrestamos := contador;
+    end;
+
+  begin
+    if(b <> nil) then
+        sumaPrestamos2 := contadorPrestamos(b^.dato.prestamos,n) + sumaPrestamos2(b^.HI,n) + sumaPrestamos2(b^.HD,n)
+    else
+      sumaPrestamos2 := 0;
+  end;
+
+var numSocio,cant: integer;
+begin
+  cant := 0;
+  writeln('----------------------- Informar Cantidad de Prestamos Por Nro. de Socio Seleccionado II ----------------->');
+  writeln;
+  write('Ingrese Nro. de Socio: ');
+  readln(numSocio);
+  writeln;
+  cant := sumaPrestamos2(b,numSocio);
+  if(cant > 0) then
+    writeln('El socio Nro. ',numSocio,' realizo ',cant,' prestamos.')
+  else
+    writeln('El socio Nro. ',numSocio,' no existe.');
+  writeln;
+end;
+
+  procedure imprimirLista(l: lLibros);
+  begin
+    while(l <> nil) do begin
+      writeLn;
+      writeln('| ISBN Nro. ',l^.dato.isbn,' | Cantidad de veces Prestado: ',l^.dato.cantPrestamos,' |');
+      writeLn;
+      l := l^.sig;
+    end;
+  end;
+
+{  f. Un módulo que reciba la estructura generada en i. y retorne una nueva estructura
+  ordenada ISBN, donde cada ISBN aparezca una vez junto a la cantidad total de veces
+  que se prestó.}
+
+procedure generarListaLibros(a: arbPrestamos);
+
+  procedure recorrerArbol(a: arbPrestamos; var pri,ult: lLibros);
+
+    procedure agregarNodoLista2(isbn: integer; var pri,ult: lLibros);
+    var nue,act: lLibros;
+    begin
+      act := pri;
+      while(act <> nil) and (isbn <> act^.dato.isbn) do
+        act := act^.sig;
+      if(act = nil) then begin
+        new(nue);
+        nue^.dato.isbn := isbn;
+        nue^.dato.cantPrestamos := 1;
+        nue^.sig := nil;
+        if(pri = nil) then
+          pri := nue
+        else
+          ult^.sig := nue;
+        ult := nue;
+      end
+      else
+        act^.dato.cantPrestamos := act^.dato.cantPrestamos + 1;
+    end;
+
+  begin
+    if(a <> nil) then begin
+      if(a^.HI <> nil) then recorrerArbol(a^.HI,pri,ult);
+      agregarNodoLista2(a^.dato.isbn,pri,ult);
+      if(a^.HD <> nil) then recorrerArbol(a^.HD,pri,ult);
+    end;
+  end;
+
+var pri,ult: lLibros;
+begin
+  pri:= nil; ult := nil;
+  recorrerArbol(a,pri,ult);
+  writeLn;
+  writeln('----------------------- Lista de Libros (Arbol de Prestamos) y cantidad de prestamos ----------------->');
+  writeLn;
+  imprimirLista(pri);
+  writeLn;
+end;
+
+function conteoPrestamos(l: lPrestamos): integer;
+begin
+  conteoPrestamos := 0;
+  while(l <> nil) do begin
+    conteoPrestamos := conteoPrestamos + 1;
+    l := l^.sig;
+  end;
+end;
+
+procedure generarListaLibros2(b: arbLibros);
+
+  procedure recorrerArbol2(b: arbLibros; var pri,ult: lLibros);
+
+    procedure agregarNodoLista3(l: libro; var pri,ult: lLibros);
+
+    var nue: lLibros;
+    begin
+      new(nue);
+      nue^.dato.isbn := l.isbn;
+      nue^.dato.cantPrestamos := conteoPrestamos(l.prestamos);
+      if(pri = nil) then
+        pri := nue
+      else
+        ult^.sig := nue;
+      ult := nue;
+    end;
+
+  begin
+    if(b <> nil) then begin
+      if(b^.HI <> nil) then recorrerArbol2(b^.HI,pri,ult);
+      agregarNodoLista3(b^.dato,pri,ult);
+      if(b^.HD <> nil) then recorrerArbol2(b^.HD,pri,ult);
+    end;
+  end;
+
+var pri,ult: lLibros;
+begin
+  pri := nil;
+  ult := nil;
+  recorrerArbol2(b,pri,ult);
+  writeLn;
+  writeln('----------------------- Lista de Libros (Arbol de Libros) y cantidad de prestamos ----------------->');
+  writeLn;
+  imprimirLista(pri);
+  writeLn;
+end;
+
+procedure prestamosEntreRangos(a: arbPrestamos);
+
+  function obtenerCantidadRangos(a: arbPrestamos; inf,sup: integer): integer;
+  begin
+    if(a <> nil) then begin
+      if(a^.dato.isbn >= inf) and (a^.dato.isbn <= sup) then 
+        obtenerCantidadRangos := 1 + obtenerCantidadRangos(a^.HI,inf,sup) + obtenerCantidadRangos(a^.HD,inf,sup)
+      else if (a^.dato.isbn < inf) then 
+        obtenerCantidadRangos := obtenerCantidadRangos(a^.HD,inf,sup)
+      else 
+        obtenerCantidadRangos := obtenerCantidadRangos(a^.HI,inf,sup);
+    end
+    else
+      obtenerCantidadRangos := 0;
+  end;
+
+var num1,num2: integer;
+begin
+  writeLn;
+  writeLn('------------------ Informar Cantidad de Prestamos entre rango de ISBN seleccionado (Arbol de Prestamos) ----------->');
+  writeLn;
+  repeat
+    write('Ingrese un numero (mayor a 0): ');
+    readln(num1);  
+    write('Ingrese un numero (mayor a 0): ');
+    readln(num2);
+  until(num1 <> num2);
+  writeLn;
+  if(num1 < num2) then
+    writeln('La cantidad total de Prestamos efectuados a los ISBN del rango seleccionado es: ',obtenerCantidadRangos(a,num1,num2))
+  else
+    writeln('La cantidad total de Prestamos efectuados a los ISBN del rango seleccionado es: ',obtenerCantidadRangos(a,num2,num1));
+  writeLn;
+end;
+
+procedure prestamosEntreRangos2(a: arbLibros);
+
+  function obtenerCantidadRangos(a: arbLibros; inf,sup: integer): integer;
+  begin
+    if(a <> nil) then begin
+      if(a^.dato.isbn >= inf) and (a^.dato.isbn <= sup) then 
+        obtenerCantidadRangos := conteoPrestamos(a^.dato.prestamos) + obtenerCantidadRangos(a^.HI,inf,sup) + obtenerCantidadRangos(a^.HD,inf,sup)
+      else if (a^.dato.isbn < inf) then 
+        obtenerCantidadRangos := obtenerCantidadRangos(a^.HD,inf,sup)
+      else 
+        obtenerCantidadRangos := obtenerCantidadRangos(a^.HI,inf,sup);
+    end
+    else
+      obtenerCantidadRangos := 0;
+  end;
+
+var num1,num2: integer;
+begin
+  writeLn;
+  writeLn('------------------ Informar Cantidad de Prestamos entre rango de ISBN seleccionado (Arbol de Libros) ----------->');
+  writeLn;
+    repeat
+      write('Ingrese un numero (mayor a 0): ');
+      readln(num1);  
+      write('Ingrese un numero (mayor a 0): ');
+      readln(num2);
+    until(num1 <> num2);
+  writeLn;
+  if(num1 < num2) then
+    writeln('La cantidad total de Prestamos efectuados a los ISBN del rango seleccionado es: ',obtenerCantidadRangos(a,num1,num2))
+  else
+    writeln('La cantidad total de Prestamos efectuados a los ISBN del rango seleccionado es: ',obtenerCantidadRangos(a,num2,num1));
+  writeLn;
 end;
 
 {Programa principal}
@@ -299,4 +525,9 @@ begin
   codigoLibroMasGrande(a);
   codigoLibroMasChico(b);
   cantPrestamosSocio(a);
+  cantPrestamosSocio2(b);
+  generarListaLibros(a);
+  generarListaLibros2(b);
+  prestamosEntreRangos(a);
+  prestamosEntreRangos2(b);
 end.
