@@ -33,7 +33,7 @@ Implementar un programa con:
 comprendidos entre los dos valores recibidos (incluidos).
 }
 
-program nombrePrograma;
+program ejercicio4P4;
 
 type
   dias = 1..31;
