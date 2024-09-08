@@ -1,3 +1,4 @@
+
 {
 Una biblioteca nos ha encargado procesar la información de los préstamos realizados
 durante el año 2021. De cada préstamo se conoce el ISBN del libro, el número de socio, día
@@ -33,187 +34,205 @@ Implementar un programa con:
 comprendidos entre los dos valores recibidos (incluidos).
 }
 
-program ejercicio4P4;
+Program ejercicio4P4;
 
-type
+Type 
   dias = 1..31;
   meses = 1..12;
 
-  fechas = record
+  fechas = Record
     dia: dias;
     mes: meses;
-  end;
+  End;
 
-  prestamo2 = record
+  prestamo2 = Record
     codS: integer;
     fecha: fechas;
     diasPrestamo: integer;
-  end;
+  End;
 
-  prestamo = record
+  prestamo = Record
     isbn: integer;
     datPrest: prestamo2
-  end;
+  End;
 
   lPrestamos = ^nPrestamos;
-  nPrestamos = record
+  nPrestamos = Record
     dato: prestamo2;
     sig: lPrestamos;
-  end;
+  End;
 
-  libro = record
+  libro = Record
     isbn: integer;
     prestamos: lPrestamos;
-  end;
+  End;
 
-  libro2 = record
+  libro2 = Record
     isbn: integer;
     cantPrestamos: integer;
-  end;
+  End;
 
   arbPrestamos = ^nArbPrestamos;
-  nArbPrestamos = record
+  nArbPrestamos = Record
     dato: prestamo;
     HI: arbPrestamos;
     HD: arbPrestamos;
-  end;
+  End;
 
   arbLibros = ^nArbLibros;
-  nArbLibros = record
+  nArbLibros = Record
     dato: libro;
     HI: arbLibros;
     HD: arbLibros;
-  end;
+  End;
 
   lLibros = ^nLibros;
-  nLibros = record
+  nLibros = Record
     dato: libro2;
     sig: lLibros;
-  end;
+  End;
 
-procedure generarArboles(var a: arbPrestamos; var b: arbLibros);
+Procedure generarArboles(Var a: arbPrestamos; Var b: arbLibros);
 
-  procedure leerPrestamos(var p: prestamo);
-  begin
-    with p do begin
+Procedure leerPrestamos(Var p: prestamo);
+Begin
+  With p Do
+    Begin
       isbn := Random(51);
-      if(isbn <> 0) then begin
-        datPrest.codS := 1 + Random(50);
-        datPrest.fecha.dia := 1 + Random(31);
-        datPrest.fecha.mes := 1 + Random(12);
-        datPrest.diasPrestamo := 1 + Random(365);
-      end;
-    end;
-  end;
+      If (isbn <> 0) Then
+        Begin
+          datPrest.codS := 1 + Random(50);
+          datPrest.fecha.dia := 1 + Random(31);
+          datPrest.fecha.mes := 1 + Random(12);
+          datPrest.diasPrestamo := 1 + Random(365);
+        End;
+    End;
+End;
 
-  procedure generarArbolPrestamos(var a: arbPrestamos; p: prestamo);
-  begin
-    if(a = nil) then begin
+Procedure generarArbolPrestamos(Var a: arbPrestamos; p: prestamo);
+Begin
+  If (a = Nil) Then
+    Begin
       new(a);
       a^.dato := p;
-      a^.HI := nil;
-      a^.HD := nil;
-    end
-    else begin
-      if(a <> nil) then begin
-        if(p.isbn < a^.dato.isbn) then generarArbolPrestamos(a^.HI,p)
-        else generarArbolPrestamos(a^.HD,p);
-      end;
-    end;
-  end;
+      a^.HI := Nil;
+      a^.HD := Nil;
+    End
+  Else
+    Begin
+      If (a <> Nil) Then
+        Begin
+          If (p.isbn < a^.dato.isbn) Then generarArbolPrestamos(a^.HI,p)
+          Else generarArbolPrestamos(a^.HD,p);
+        End;
+    End;
+End;
 
-  procedure generarArbolLibros(var b: arbLibros; p: prestamo);
+Procedure generarArbolLibros(Var b: arbLibros; p: prestamo);
 
-    procedure inicializarLista(var l: lPrestamos);
-    begin
-      l := nil;
-    end;
+Procedure inicializarLista(Var l: lPrestamos);
+Begin
+  l := Nil;
+End;
 
-    procedure agregarNodoLista(var l: lPrestamos; p: prestamo2);
-    var nue: lPrestamos;
-    begin
-      new(nue);
-      nue^.dato := p;
-      nue^.sig := l;
-      l := nue;
-    end;
+Procedure agregarNodoLista(Var l: lPrestamos; p: prestamo2);
 
-  begin
-    if(b = nil) then begin
+Var nue: lPrestamos;
+Begin
+  new(nue);
+  nue^.dato := p;
+  nue^.sig := l;
+  l := nue;
+End;
+
+Begin
+  If (b = Nil) Then
+    Begin
       new(b);
       b^.dato.isbn := p.isbn;
       inicializarLista(b^.dato.prestamos);
       agregarNodoLista(b^.dato.prestamos,p.datPrest);
-      b^.HI := nil;
-      b^.HD := nil;
-    end
-    else begin
-      if(p.isbn = b^.dato.isbn) then begin
-        b^.dato.isbn := p.isbn;
-        agregarNodoLista(b^.dato.prestamos,p.datPrest);
-      end
-      else begin
-        if(p.isbn > b^.dato.isbn) then generarArbolLibros(b^.HD,p)
-        else generarArbolLibros(b^.HI,p);
-      end;
-    end;
-  end;
+      b^.HI := Nil;
+      b^.HD := Nil;
+    End
+  Else
+    Begin
+      If (p.isbn = b^.dato.isbn) Then
+        Begin
+          b^.dato.isbn := p.isbn;
+          agregarNodoLista(b^.dato.prestamos,p.datPrest);
+        End
+      Else
+        Begin
+          If (p.isbn > b^.dato.isbn) Then generarArbolLibros(b^.HD,p)
+          Else generarArbolLibros(b^.HI,p);
+        End;
+    End;
+End;
 
-var p:prestamo;
-begin
-  a := nil;
-  b := nil;
+Var p: prestamo;
+Begin
+  a := Nil;
+  b := Nil;
   leerPrestamos(p);
-  while (p.isbn <> 0) do begin
-    generarArbolPrestamos(a,p);
-    generarArbolLibros(b,p);
-    leerPrestamos(p);
-  end;
-end;
+  While (p.isbn <> 0) Do
+    Begin
+      generarArbolPrestamos(a,p);
+      generarArbolLibros(b,p);
+      leerPrestamos(p);
+    End;
+End;
 
-procedure imprimirArboles(a: arbPrestamos; b: arbLibros);
+Procedure imprimirArboles(a: arbPrestamos; b: arbLibros);
 
-  procedure imprimirArbolPrestamos(a: arbPrestamos);
-  begin
-    if(a <> nil) then begin
-      if(a^.HI <> nil) then imprimirArbolPrestamos(a^.HI);
-      writeln('| ISBN del Libro: ',a^.dato.isbn,' | Nro. de Socio: ',a^.dato.datPrest.codS,' | Fecha de Prestamo: ',a^.dato.datPrest.fecha.dia,'/',a^.dato.datPrest.fecha.mes,' | Dias de Prestamo: ',a^.dato.datPrest.diasPrestamo);
-      if(a^.HD <> nil) then imprimirArbolPrestamos(a^.HD);
-    end;
-  end;
+Procedure imprimirArbolPrestamos(a: arbPrestamos);
+Begin
+  If (a <> Nil) Then
+    Begin
+      If (a^.HI <> Nil) Then imprimirArbolPrestamos(a^.HI);
+      writeln('| ISBN del Libro: ',a^.dato.isbn,' | Nro. de Socio: ',a^.dato.datPrest.codS,' | Fecha de Prestamo: ',a^.dato.datPrest.fecha.dia,'/',a^.
+              dato.datPrest.fecha.mes,' | Dias de Prestamo: ',a^.dato.datPrest.diasPrestamo);
+      If (a^.HD <> Nil) Then imprimirArbolPrestamos(a^.HD);
+    End;
+End;
 
-  procedure imprimirArbolLibros(b: arbLibros);
+Procedure imprimirArbolLibros(b: arbLibros);
 
-  procedure imprimirPrestamos(l: lPrestamos);
-  begin
-    while(l <> nil) do begin
-      writeln('| Nro. de Socio: ',l^.dato.codS,' | Fecha de Prestamo: ',l^.dato.fecha.dia,'/',l^.dato.fecha.mes,' | Dias de Prestamo: ',l^.dato.diasPrestamo);
+Procedure imprimirPrestamos(l: lPrestamos);
+Begin
+  While (l <> Nil) Do
+    Begin
+      writeln('| Nro. de Socio: ',l^.dato.codS,' | Fecha de Prestamo: ',l^.dato.fecha.dia,'/',l^.dato.fecha.mes,' | Dias de Prestamo: ',l^.dato.
+              diasPrestamo);
       l := l^.sig;
-    end;
-  end;
+    End;
+End;
 
-  begin
-    if(b <> nil) then begin
-      if(b^.HI <> nil) then imprimirArbolLibros(b^.HI);
-      if(b^.dato.prestamos <> nil) then begin
-        writeln('------------------------------------');
-        writeln('ISBN Nro. ',b^.dato.isbn,' - Listado de prestamos: ');
-        writeln('------------------------------------');
-        writeln;
-        imprimirPrestamos(b^.dato.prestamos);
-        writeln;        
-      end
-      else begin
-        writeln('------------------------------------------------------------');
-        writeln('El libro con ISBN Nro. ',b^.dato.isbn,' no registra prestamos a la fecha.');
-        writeln('------------------------------------------------------------');
-        writeln;
-      end;
-      if(b^.HD <> nil) then imprimirArbolLibros(b^.HD);
-    end;
-  end;
+Begin
+  If (b <> Nil) Then
+    Begin
+      If (b^.HI <> Nil) Then imprimirArbolLibros(b^.HI);
+      If (b^.dato.prestamos <> Nil) Then
+        Begin
+          writeln('------------------------------------');
+          writeln('ISBN Nro. ',b^.dato.isbn,' - Listado de prestamos: ');
+          writeln('------------------------------------');
+          writeln;
+          imprimirPrestamos(b^.dato.prestamos);
+          writeln;
+        End
+      Else
+        Begin
+          writeln('------------------------------------------------------------');
+          writeln('El libro con ISBN Nro. ',b^.dato.isbn,' no registra prestamos a la fecha.');
+          writeln('------------------------------------------------------------');
+          writeln;
+        End;
+      If (b^.HD <> Nil) Then imprimirArbolLibros(b^.HD);
+    End;
+End;
 
-begin
+Begin
   writeln;
   writeln('------------------------------ ARBOL DE PRESTAMOS ------------------------------');
   writeln;
@@ -231,61 +250,63 @@ begin
   writeln;
   writeln('     /////////////////////////////////////////////////////////////////////////////////');
   writeln;
-end;
+End;
 
-procedure codigoLibroMasGrande(a: arbPrestamos);
+Procedure codigoLibroMasGrande(a: arbPrestamos);
 
-  function CodLibroMax(a: arbPrestamos): integer;
-begin
-  if(a = nil) then
+Function CodLibroMax(a: arbPrestamos): integer;
+Begin
+  If (a = Nil) Then
     CodLibroMax := 0
-  else if(a^.HD = nil) then
-    CodLibroMax := a^.dato.isbn
-  else
+  Else If (a^.HD = Nil) Then
+         CodLibroMax := a^.dato.isbn
+  Else
     CodLibroMax := CodLibroMax(a^.HD);
-end;
+End;
 
-begin
+Begin
   writeln('----------------------- Informar ISBN mas grande ----------------->');
   writeln;
   writeln('El ISBN mas grande es el Nro. ',CodLibroMax(a));
   writeln;
-end;
+End;
 
-procedure codigoLibroMasChico(b: arbLibros);
+Procedure codigoLibroMasChico(b: arbLibros);
 
-  function CodLibroMin(b: arbLibros): integer;
-  begin
-    if(b = nil) then
-      CodLibroMin := 0
-    else if(b^.HI = nil) then
-      CodLibroMin := b^.dato.isbn
-    else
-      CodLibroMin := CodLibroMin(b^.HI);
-  end;
+Function CodLibroMin(b: arbLibros): integer;
+Begin
+  If (b = Nil) Then
+    CodLibroMin := 0
+  Else If (b^.HI = Nil) Then
+         CodLibroMin := b^.dato.isbn
+  Else
+    CodLibroMin := CodLibroMin(b^.HI);
+End;
 
-begin
+Begin
   writeln('----------------------- Informar ISBN mas chico ----------------->');
   writeln;
   writeln('El ISBN mas chico es el Nro. ',CodLibroMin(b));
   writeln;
-end;
+End;
 
-procedure cantPrestamosSocio(a: arbPrestamos);
+Procedure cantPrestamosSocio(a: arbPrestamos);
 
-  function sumaPrestamos(a: arbPrestamos; n: integer): integer;
-  begin
-    if( a <> nil) then begin
-      if (n = a^.dato.datPrest.codS) then 
+Function sumaPrestamos(a: arbPrestamos; n: integer): integer;
+Begin
+  If ( a <> Nil) Then
+    Begin
+      If (n = a^.dato.datPrest.codS) Then
         sumaPrestamos := 1 + sumaPrestamos(a^.HI,n) + sumaPrestamos(a^.HD,n)
-      else sumaPrestamos := sumaPrestamos(a^.HI,n) + sumaPrestamos(a^.HD,n);
-    end
-    else
-      sumaPrestamos := 0;
-  end;
+      Else sumaPrestamos := sumaPrestamos(a^.HI,n) + sumaPrestamos(a^.HD,n);
+    End
+  Else
+    sumaPrestamos := 0;
+End;
 
-var numSocio: integer; cant: integer;
-begin
+Var numSocio: integer;
+  cant: integer;
+Begin
   cant := 0;
   writeln('----------------------- Informar Cantidad de Prestamos Por Nro. de Socio Seleccionado ----------------->');
   writeln;
@@ -293,38 +314,40 @@ begin
   readln(numSocio);
   writeln;
   cant := sumaPrestamos(a,numSocio);
-  if(cant > 0) then
+  If (cant > 0) Then
     writeln('El socio Nro. ',numSocio,' realizo ',cant,' prestamos.')
-  else
+  Else
     writeln('El socio Nro. ',numSocio,' no existe.');
   writeln;
-end;
+End;
 
-procedure cantPrestamosSocio2(b: arbLibros);
+Procedure cantPrestamosSocio2(b: arbLibros);
 
-  function sumaPrestamos2(b: arbLibros; n: integer): integer;
+Function sumaPrestamos2(b: arbLibros; n: integer): integer;
 
-    function contadorPrestamos(l: lPrestamos; n: integer): integer;
-    var contador: integer;
-    begin
-      contador := 0;
-      while(l <> nil) do begin
-        if(n = l^.dato.codS) then
-          contador := contador + 1;
-        l := l^.sig;
-      end;
-      contadorPrestamos := contador;
-    end;
+Function contadorPrestamos(l: lPrestamos; n: integer): integer;
 
-  begin
-    if(b <> nil) then
-        sumaPrestamos2 := contadorPrestamos(b^.dato.prestamos,n) + sumaPrestamos2(b^.HI,n) + sumaPrestamos2(b^.HD,n)
-    else
-      sumaPrestamos2 := 0;
-  end;
+Var contador: integer;
+Begin
+  contador := 0;
+  While (l <> Nil) Do
+    Begin
+      If (n = l^.dato.codS) Then
+        contador := contador + 1;
+      l := l^.sig;
+    End;
+  contadorPrestamos := contador;
+End;
 
-var numSocio,cant: integer;
-begin
+Begin
+  If (b <> Nil) Then
+    sumaPrestamos2 := contadorPrestamos(b^.dato.prestamos,n) + sumaPrestamos2(b^.HI,n) + sumaPrestamos2(b^.HD,n)
+  Else
+    sumaPrestamos2 := 0;
+End;
+
+Var numSocio,cant: integer;
+Begin
   cant := 0;
   writeln('----------------------- Informar Cantidad de Prestamos Por Nro. de Socio Seleccionado II ----------------->');
   writeln;
@@ -332,193 +355,204 @@ begin
   readln(numSocio);
   writeln;
   cant := sumaPrestamos2(b,numSocio);
-  if(cant > 0) then
+  If (cant > 0) Then
     writeln('El socio Nro. ',numSocio,' realizo ',cant,' prestamos.')
-  else
+  Else
     writeln('El socio Nro. ',numSocio,' no existe.');
   writeln;
-end;
+End;
 
-  procedure imprimirLista(l: lLibros);
-  begin
-    while(l <> nil) do begin
+Procedure imprimirLista(l: lLibros);
+Begin
+  While (l <> Nil) Do
+    Begin
       writeLn;
       writeln('| ISBN Nro. ',l^.dato.isbn,' | Cantidad de veces Prestado: ',l^.dato.cantPrestamos,' |');
       writeLn;
       l := l^.sig;
-    end;
-  end;
+    End;
+End;
+
 
 {  f. Un módulo que reciba la estructura generada en i. y retorne una nueva estructura
   ordenada ISBN, donde cada ISBN aparezca una vez junto a la cantidad total de veces
   que se prestó.}
 
-procedure generarListaLibros(a: arbPrestamos);
+Procedure generarListaLibros(a: arbPrestamos);
 
-  procedure recorrerArbol(a: arbPrestamos; var pri,ult: lLibros);
+Procedure recorrerArbol(a: arbPrestamos; Var pri,ult: lLibros);
 
-    procedure agregarNodoLista2(isbn: integer; var pri,ult: lLibros);
-    var nue,act: lLibros;
-    begin
-      act := pri;
-      while(act <> nil) and (isbn <> act^.dato.isbn) do
-        act := act^.sig;
-      if(act = nil) then begin
-        new(nue);
-        nue^.dato.isbn := isbn;
-        nue^.dato.cantPrestamos := 1;
-        nue^.sig := nil;
-        if(pri = nil) then
-          pri := nue
-        else
-          ult^.sig := nue;
-        ult := nue;
-      end
-      else
-        act^.dato.cantPrestamos := act^.dato.cantPrestamos + 1;
-    end;
+Procedure agregarNodoLista2(isbn: integer; Var pri,ult: lLibros);
 
-  begin
-    if(a <> nil) then begin
-      if(a^.HI <> nil) then recorrerArbol(a^.HI,pri,ult);
+Var nue,act: lLibros;
+Begin
+  act := pri;
+  While (act <> Nil) And (isbn <> act^.dato.isbn) Do
+    act := act^.sig;
+  If (act = Nil) Then
+    Begin
+      new(nue);
+      nue^.dato.isbn := isbn;
+      nue^.dato.cantPrestamos := 1;
+      nue^.sig := Nil;
+      If (pri = Nil) Then
+        pri := nue
+      Else
+        ult^.sig := nue;
+      ult := nue;
+    End
+  Else
+    act^.dato.cantPrestamos := act^.dato.cantPrestamos + 1;
+End;
+
+Begin
+  If (a <> Nil) Then
+    Begin
+      If (a^.HI <> Nil) Then recorrerArbol(a^.HI,pri,ult);
       agregarNodoLista2(a^.dato.isbn,pri,ult);
-      if(a^.HD <> nil) then recorrerArbol(a^.HD,pri,ult);
-    end;
-  end;
+      If (a^.HD <> Nil) Then recorrerArbol(a^.HD,pri,ult);
+    End;
+End;
 
-var pri,ult: lLibros;
-begin
-  pri:= nil; ult := nil;
+Var pri,ult: lLibros;
+Begin
+  pri := Nil;
+  ult := Nil;
   recorrerArbol(a,pri,ult);
   writeLn;
   writeln('----------------------- Lista de Libros (Arbol de Prestamos) y cantidad de prestamos ----------------->');
   writeLn;
   imprimirLista(pri);
   writeLn;
-end;
+End;
 
-function conteoPrestamos(l: lPrestamos): integer;
-begin
+Function conteoPrestamos(l: lPrestamos): integer;
+Begin
   conteoPrestamos := 0;
-  while(l <> nil) do begin
-    conteoPrestamos := conteoPrestamos + 1;
-    l := l^.sig;
-  end;
-end;
+  While (l <> Nil) Do
+    Begin
+      conteoPrestamos := conteoPrestamos + 1;
+      l := l^.sig;
+    End;
+End;
 
-procedure generarListaLibros2(b: arbLibros);
+Procedure generarListaLibros2(b: arbLibros);
 
-  procedure recorrerArbol2(b: arbLibros; var pri,ult: lLibros);
+Procedure recorrerArbol2(b: arbLibros; Var pri,ult: lLibros);
 
-    procedure agregarNodoLista3(l: libro; var pri,ult: lLibros);
+Procedure agregarNodoLista3(l: libro; Var pri,ult: lLibros);
 
-    var nue: lLibros;
-    begin
-      new(nue);
-      nue^.dato.isbn := l.isbn;
-      nue^.dato.cantPrestamos := conteoPrestamos(l.prestamos);
-      if(pri = nil) then
-        pri := nue
-      else
-        ult^.sig := nue;
-      ult := nue;
-    end;
+Var nue: lLibros;
+Begin
+  new(nue);
+  nue^.dato.isbn := l.isbn;
+  nue^.dato.cantPrestamos := conteoPrestamos(l.prestamos);
+  If (pri = Nil) Then
+    pri := nue
+  Else
+    ult^.sig := nue;
+  ult := nue;
+End;
 
-  begin
-    if(b <> nil) then begin
-      if(b^.HI <> nil) then recorrerArbol2(b^.HI,pri,ult);
+Begin
+  If (b <> Nil) Then
+    Begin
+      If (b^.HI <> Nil) Then recorrerArbol2(b^.HI,pri,ult);
       agregarNodoLista3(b^.dato,pri,ult);
-      if(b^.HD <> nil) then recorrerArbol2(b^.HD,pri,ult);
-    end;
-  end;
+      If (b^.HD <> Nil) Then recorrerArbol2(b^.HD,pri,ult);
+    End;
+End;
 
-var pri,ult: lLibros;
-begin
-  pri := nil;
-  ult := nil;
+Var pri,ult: lLibros;
+Begin
+  pri := Nil;
+  ult := Nil;
   recorrerArbol2(b,pri,ult);
   writeLn;
   writeln('----------------------- Lista de Libros (Arbol de Libros) y cantidad de prestamos ----------------->');
   writeLn;
   imprimirLista(pri);
   writeLn;
-end;
+End;
 
-procedure prestamosEntreRangos(a: arbPrestamos);
+Procedure prestamosEntreRangos(a: arbPrestamos);
 
-  function obtenerCantidadRangos(a: arbPrestamos; inf,sup: integer): integer;
-  begin
-    if(a <> nil) then begin
-      if(a^.dato.isbn >= inf) and (a^.dato.isbn <= sup) then 
+Function obtenerCantidadRangos(a: arbPrestamos; inf,sup: integer): integer;
+Begin
+  If (a <> Nil) Then
+    Begin
+      If (a^.dato.isbn >= inf) And (a^.dato.isbn <= sup) Then
         obtenerCantidadRangos := 1 + obtenerCantidadRangos(a^.HI,inf,sup) + obtenerCantidadRangos(a^.HD,inf,sup)
-      else if (a^.dato.isbn < inf) then 
-        obtenerCantidadRangos := obtenerCantidadRangos(a^.HD,inf,sup)
-      else 
+      Else If (a^.dato.isbn < inf) Then
+             obtenerCantidadRangos := obtenerCantidadRangos(a^.HD,inf,sup)
+      Else
         obtenerCantidadRangos := obtenerCantidadRangos(a^.HI,inf,sup);
-    end
-    else
-      obtenerCantidadRangos := 0;
-  end;
+    End
+  Else
+    obtenerCantidadRangos := 0;
+End;
 
-var num1,num2: integer;
-begin
+Var num1,num2: integer;
+Begin
   writeLn;
   writeLn('------------------ Informar Cantidad de Prestamos entre rango de ISBN seleccionado (Arbol de Prestamos) ----------->');
   writeLn;
-  repeat
+  Repeat
     write('Ingrese un numero (mayor a 0): ');
-    readln(num1);  
+    readln(num1);
     write('Ingrese un numero (mayor a 0): ');
     readln(num2);
-  until(num1 <> num2);
+  Until (num1 <> num2);
   writeLn;
-  if(num1 < num2) then
+  If (num1 < num2) Then
     writeln('La cantidad total de Prestamos efectuados a los ISBN del rango seleccionado es: ',obtenerCantidadRangos(a,num1,num2))
-  else
+  Else
     writeln('La cantidad total de Prestamos efectuados a los ISBN del rango seleccionado es: ',obtenerCantidadRangos(a,num2,num1));
   writeLn;
-end;
+End;
 
-procedure prestamosEntreRangos2(a: arbLibros);
+Procedure prestamosEntreRangos2(a: arbLibros);
 
-  function obtenerCantidadRangos(a: arbLibros; inf,sup: integer): integer;
-  begin
-    if(a <> nil) then begin
-      if(a^.dato.isbn >= inf) and (a^.dato.isbn <= sup) then 
+Function obtenerCantidadRangos(a: arbLibros; inf,sup: integer): integer;
+Begin
+  If (a <> Nil) Then
+    Begin
+      If (a^.dato.isbn >= inf) And (a^.dato.isbn <= sup) Then
         obtenerCantidadRangos := conteoPrestamos(a^.dato.prestamos) + obtenerCantidadRangos(a^.HI,inf,sup) + obtenerCantidadRangos(a^.HD,inf,sup)
-      else if (a^.dato.isbn < inf) then 
-        obtenerCantidadRangos := obtenerCantidadRangos(a^.HD,inf,sup)
-      else 
+      Else If (a^.dato.isbn < inf) Then
+             obtenerCantidadRangos := obtenerCantidadRangos(a^.HD,inf,sup)
+      Else
         obtenerCantidadRangos := obtenerCantidadRangos(a^.HI,inf,sup);
-    end
-    else
-      obtenerCantidadRangos := 0;
-  end;
+    End
+  Else
+    obtenerCantidadRangos := 0;
+End;
 
-var num1,num2: integer;
-begin
+Var num1,num2: integer;
+Begin
   writeLn;
   writeLn('------------------ Informar Cantidad de Prestamos entre rango de ISBN seleccionado (Arbol de Libros) ----------->');
   writeLn;
-    repeat
-      write('Ingrese un numero (mayor a 0): ');
-      readln(num1);  
-      write('Ingrese un numero (mayor a 0): ');
-      readln(num2);
-    until(num1 <> num2);
+  Repeat
+    write('Ingrese un numero (mayor a 0): ');
+    readln(num1);
+    write('Ingrese un numero (mayor a 0): ');
+    readln(num2);
+  Until (num1 <> num2);
   writeLn;
-  if(num1 < num2) then
+  If (num1 < num2) Then
     writeln('La cantidad total de Prestamos efectuados a los ISBN del rango seleccionado es: ',obtenerCantidadRangos(a,num1,num2))
-  else
+  Else
     writeln('La cantidad total de Prestamos efectuados a los ISBN del rango seleccionado es: ',obtenerCantidadRangos(a,num2,num1));
   writeLn;
-end;
+End;
 
 {Programa principal}
-var
+
+Var 
   a: arbPrestamos;
   b: arbLibros;
-begin
+Begin
   Randomize;
   generarArboles(a,b);
   imprimirArboles(a,b);
@@ -530,4 +564,4 @@ begin
   generarListaLibros2(b);
   prestamosEntreRangos(a);
   prestamosEntreRangos2(b);
-end.
+End.
