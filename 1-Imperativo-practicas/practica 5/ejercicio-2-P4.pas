@@ -62,6 +62,12 @@ Type
     dato: marca;
     HI,HD: arbMarcas;
   End;
+  
+  lAniosFab = ^nAniosFab;
+  nAniosFab = record
+   dato: auto;
+   sig: lAniosFab;
+  end;
 
 
 {modulos}
@@ -72,7 +78,7 @@ Procedure leerAuto(Var a: auto);
 
 Var 
   modelos: array [0..4] Of str20 = ('kronos', 'confort', 'spectre', 'chad', 'pepePlus');
-  marcas: array [1..6] Of str20 = ('volskwagen', 'renault', 'ford', 'ferrari', 'lamborghini','MMM');
+  marcas: array [1..6] Of str20 = ('volkswagen', 'renault', 'ford', 'ferrari', 'lamborghini','MMM');
 Begin
   With a Do
     Begin
@@ -158,15 +164,15 @@ Begin
     End;
 End;
 
-Procedure imprimirArboles(a: arbPatentes; b: arbMarcas);
-
-
-Procedure recorrerArbolPatentes(a: arbPatentes);
-
 Procedure imprimirNodo(a: auto);
 Begin
   writeln('| Patente: ',a.info.patente,' | Marca: ',a.marca,' | Modelo: ',a.info.modelo,' | A. de Fabricacion: ',a.info.anioFab,' |');
 End;
+
+Procedure imprimirArboles(a: arbPatentes; b: arbMarcas);
+
+
+Procedure recorrerArbolPatentes(a: arbPatentes);
 
 Begin
   If (a <> Nil) Then
@@ -222,6 +228,214 @@ Begin
   writeln
 End;
 
+procedure contadorAutosPorMarca(a: arbPatentes);
+
+   function contador(a: arbPatentes; mrc: str20): integer;
+   begin
+      if(a = nil) then
+	 contador := 0
+      else if  (mrc = a^.dato.marca) then contador := 1 + contador(a^.HI,mrc) + contador(a^.HD,mrc)
+      else contador := contador(a^.HI,mrc) + contador(a^.HD,mrc);
+   end;
+   
+var mrc: str20;
+begin
+   writeln;
+   writeln('--------------------- Cantidad de Autos por Marca (Arbol de Patentes) ------------------>');
+   writeln;
+   repeat
+      writeln;
+      write('Ingrese una marca: ');
+      readln(mrc);
+      writeln;      
+   until ((mrc = 'volkswagen') or (mrc ='renault') or (mrc = 'ford') or (mrc = 'ferrari') or (mrc = 'lamborghini'));
+   writeln;
+   writeln('La concesionaria tiene ',contador(a,mrc),' autos de la marca ',mrc);
+   writeln;
+end;
+
+procedure contadorAutosPorMarca2(a: arbMarcas);
+   
+   function recorrerArbolMarcas(a: arbMarcas; mrc: str20): integer;
+   
+      function contadorLista(l: lAutos): integer;
+      begin
+	 contadorLista := 0;
+	 while(l <> nil) do begin
+	    contadorLista := contadorLista + 1;
+	    l := l^.sig;
+	 end;
+      end;
+      
+   begin
+      if(a = nil) then 
+	 recorrerArbolMarcas := 0
+      else if(mrc = a^.dato.empresa) then 
+	 recorrerArbolMarcas := contadorLista(a^.dato.autos) + recorrerArbolMarcas(a^.HI,mrc) + recorrerArbolMarcas(a^.HD,mrc)
+      else 
+	 recorrerArbolMarcas := recorrerArbolMarcas(a^.HI,mrc) + recorrerArbolMarcas(a^.HD,mrc);
+   end;
+      
+
+var mrc: str20;
+begin
+   writeln;
+   writeln('--------------------- Cantidad de Autos por Marca (Arbol de Marcas) ------------------>');
+   writeln;
+   repeat
+      writeln;
+      write('Ingrese una marca: ');
+      readln(mrc);
+      writeln;      
+   until ((mrc = 'volkswagen') or (mrc ='renault') or (mrc = 'ford') or (mrc = 'ferrari') or (mrc = 'lamborghini'));
+   writeln;
+   writeln('La concesionaria tiene ',recorrerArbolMarcas(a,mrc),' autos de la marca ',mrc);
+   writeln;
+end;
+
+procedure generarListaPorAnioFab(a: arbPatentes);
+
+   procedure recorrerArbolPatentes2(a: arbPatentes; var l: lAniosFab);
+   
+      procedure insertarOrdenado(var l: lAniosFab; a: auto);
+      var nue,ant,act: lAniosFab;
+      begin
+	 new(nue);
+	 nue^.dato := a;
+	 ant := l;
+	 act := l;
+	 while(act <> nil) and (a.info.anioFab > act^.dato.info.anioFab) do begin
+	    ant := act;
+	    act := act^.sig;
+	 end;
+	 if(act = ant) then
+	    l := nue
+	 else
+	    ant^.sig := nue;
+	 nue^.sig := act;
+      end;
+   
+   begin
+      if(a <> nil) then begin
+	 if(a^.HI <> nil) then recorrerArbolPatentes2(a^.HI,l);
+	 insertarOrdenado(l,a^.dato);
+	 if(a^.HD <> nil) then recorrerArbolPatentes2(a^.HD,l);
+      end;
+   end;
+   
+   procedure imprimirListaAnios(l: lAniosFab);
+   begin
+      while(l <> nil) do begin
+	 imprimirNodo(l^.dato);
+	 writeln;
+	 l := l^.sig;
+      end;
+   end;
+
+var pri: lAniosFab;
+begin
+   pri := nil;
+   recorrerArbolPatentes2(a,pri);
+   writeln('--------------------- Lista de autos por anio de fabricacion ------------------>');
+   writeln;
+   imprimirListaAnios(pri);
+end;
+
+procedure informarModelo(a: arbPatentes);
+
+   procedure buscarPatente(a: arbPatentes; pat: integer; var mdl: str20);
+   begin
+      if(a <> nil) then begin
+	 if(pat = a^.dato.info.patente) then
+	    mdl := a^.dato.info.modelo
+	 else if (pat < a^.dato.info.patente) then
+	    buscarPatente (a^.HI,pat,mdl)
+	 else
+	    buscarPatente(a^.HD,pat,mdl);
+      end
+      else
+	 mdl := 'no existe';
+   end;
+
+var pat: integer; mdl: str20;
+begin
+   writeln;
+   writeln('--------------------- Informar Modelo de Auto por patente seleccionada (Arbol de Patentes) ------------------>');
+   writeln;
+   repeat
+      writeln;
+      write('Ingrese un numero de patente (mayor a 0): ');
+      readln(pat);
+      writeln;
+   until(pat > 0);
+   buscarPatente(a,pat,mdl);
+   if(mdl <> 'no existe') then begin
+      writeln;
+      writeln('La patente Nro. ',pat,' pertenece al auto modelo: ',mdl);
+      writeln;
+   end
+   else
+      writeln('La patente Nro. ',pat,' no pertenece a ningun modelo de auto de la concesionaria');   
+end;
+
+procedure informarModelo2(a: arbMarcas);
+
+   procedure buscarPorMarca(l: lAutos; pat: integer; var mdl: str20; var esta: boolean);
+   begin
+      while (l <> nil) and (not esta) do
+      begin
+         if (l^.dato.patente = pat) then
+         begin
+            mdl := l^.dato.modelo;
+            esta := true;  // Marcar que se encontró
+         end;
+         l := l^.sig;
+      end;
+   end;
+
+   procedure buscarPatente2(a: arbMarcas; pat: integer; var mdl: str20; var esta: boolean);
+   begin
+      if (a <> nil) and (not esta) then  // Verificar si no se ha encontrado aún
+      begin
+         buscarPorMarca(a^.dato.autos, pat, mdl, esta);  // Buscar en la lista de autos de la marca
+         
+         if not esta then  // Si no se encontró en la lista actual, seguir buscando en el árbol
+         begin
+            buscarPatente2(a^.HI, pat, mdl, esta);
+            if not esta then
+               buscarPatente2(a^.HD, pat, mdl, esta);
+         end;
+      end;
+   end;
+
+var
+   pat: integer;
+   mdl: str20;
+   esta: boolean;
+begin
+   writeln;
+   writeln('--------------------- Informar Modelo de Auto por patente seleccionada (Arbol de Marcas) ------------------>');
+   writeln;
+   repeat
+      writeln;
+      write('Ingrese un numero de patente (mayor a 0): ');
+      readln(pat);
+      writeln;
+   until(pat > 0);
+   
+   esta := false;  // Inicializar como no encontrado
+   buscarPatente2(a, pat, mdl, esta);  // Llamar al procedimiento de búsqueda
+
+   if (esta) then
+   begin
+      writeln;
+      writeln('La patente Nro. ', pat, ' pertenece al auto modelo: ', mdl);
+      writeln;
+   end
+   else
+      writeln('La patente Nro. ', pat, ' no pertenece a ningun modelo de auto de la concesionaria');   
+end;
+
 
 {Programa Principal}
 
@@ -232,4 +446,9 @@ Begin
   Randomize;
   generarArboles(a,b);
   imprimirArboles(a,b);
+  contadorAutosPorMarca(a);
+  contadorAutosPorMarca2(b);
+  generarListaPorAnioFab(a);
+  informarModelo(a);
+  informarModelo2(b);
 End.
