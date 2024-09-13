@@ -16,7 +16,8 @@ const
   min = 10;
   max = 155;
 
-type vector = array [1..dimF] of integer;     
+type 
+  vector = array [1..dimF] of integer;     
 
 procedure CargarVector (var v: vector; var dimL: integer);
 
@@ -113,18 +114,22 @@ end;
 
 function BuscarValor(v: vector; dimL, x: integer): boolean;
 
-  function BuscarValorRecursivo(v: vector; pos, x: integer): boolean;
+  function BuscarValorRecursivo(v: vector; dimL, x,p: integer): boolean;
   begin
-    if pos = 0 then
-      BuscarValorRecursivo := False  // Caso base: si llegamos a la posición 0, no se encontró el valor.
-    else if v[pos] = x then
-      BuscarValorRecursivo := True   // Caso base: si el valor en la posición actual es igual a x, devolver True.
-    else
-      BuscarValorRecursivo := BuscarValorRecursivo(v, pos - 1, x);  // Llamada recursiva reduciendo la posición.
+      if(p > dimL) then
+	 BuscarValorRecursivo := false
+      else begin
+	 if (v[p] = x) then
+	    BuscarValorRecursivo := true;
+	 else
+	    BuscarValorRecursivo := BuscarValorRecursivo(v,dimL,x,p+1); 
+      end;      
   end;
 
+var p: integer
 begin
-  BuscarValor := BuscarValorRecursivo(v, dimL, x);
+  p := 1;
+  BuscarValor := BuscarValorRecursivo(v, dimL, x,p);
 end;
 
 procedure ImprimirDigitos (v: vector; dimL: integer);
