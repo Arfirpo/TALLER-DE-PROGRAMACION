@@ -2,12 +2,14 @@
 package tema1;
 
 //Paso 1: Importar la funcionalidad para lectura de datos
+import PaqueteLectura.Lector;
 
 
 public class Ej02Jugadores {
 
   
     public static void main(String[] args) {
+        
         //Paso 2: Declarar la variable vector de double 
         
         //Paso 3: Crear el vector para 15 double 
