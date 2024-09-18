@@ -12,9 +12,8 @@ imprima la calificación promedio obtenida por cada aspecto.
 package Practica1;
 
 import PaqueteLectura.Lector;
-import java.util.Formatter;
 
-public class Ejercicio3P1_AF{
+public class Ejercicio5P1_AF{
 
 	public static void main(String[] args) {
 		
@@ -48,13 +47,13 @@ public class Ejercicio3P1_AF{
       }
     }
 		
-		//calcular promedios por categoria
-		for(j=0;j<cat;j++){
+   //calcular promedios por categoria
+   for(j=0;j<cat;j++){
       prom = 0;
       for(i=0;i<cli;i++)
-      prom += matriz [i][j];
+         prom += matriz [i][j];
       vector[j] = prom / cli;
-		}
+   }
 		
 		//informar promedios matriz
 		System.out.println();
