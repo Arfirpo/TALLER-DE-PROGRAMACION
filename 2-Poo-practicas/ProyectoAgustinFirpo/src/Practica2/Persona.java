@@ -14,7 +14,7 @@ public class Persona {
         DNI = unDNI;
         edad = unaEdad; 
     }
-    
+      
     // Constructor 2 - vacio
     public Persona(){
      

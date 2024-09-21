@@ -6,7 +6,7 @@ package Practica2;
 
 import PaqueteLectura.GeneradorAleatorio;
 
-public class Ejercicio2P2 {
+public class Ejercicio2P2_AF {
 
    public static void main(String[] args) {
       GeneradorAleatorio.iniciar();
