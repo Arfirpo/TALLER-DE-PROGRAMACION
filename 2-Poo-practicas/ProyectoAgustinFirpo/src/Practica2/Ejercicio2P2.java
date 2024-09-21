@@ -19,7 +19,7 @@ public class Ejercicio2P2 {
       
       //Cargar Vector Personas
       
-      edad = GeneradorAleatorio.generarInt(10);
+      edad = GeneradorAleatorio.generarInt(100);
       while((edad != 0) && (dimL < dimF)){
          Persona p = new Persona();
          p.setEdad(edad);
@@ -27,7 +27,7 @@ public class Ejercicio2P2 {
          p.setNombre(GeneradorAleatorio.generarString(5));
          vectorPersonas[dimL] = p;
          dimL++;
-         edad = GeneradorAleatorio.generarInt(10);
+         edad = GeneradorAleatorio.generarInt(100);
       }
       
       Persona minPersona = vectorPersonas[0];
@@ -37,7 +37,7 @@ public class Ejercicio2P2 {
          System.out.println((i+1) + ". " + vectorPersonas[i].toString());
          System.out.println("");
          if(vectorPersonas[i].getDNI() < minPersona.getDNI()) minPersona = vectorPersonas[i];
-         if(vectorPersonas[i].getEdad() > 65) cantMay65++;
+         if(vectorPersonas[i].esMayor(65)) cantMay65++;
       }
       //informar cantidad personas mayores a 65 años
       System.out.println(cantMay65 + " personas leidas tienen mas de 65 años.");

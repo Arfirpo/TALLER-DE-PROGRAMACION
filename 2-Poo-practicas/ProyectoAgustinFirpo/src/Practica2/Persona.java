@@ -19,8 +19,15 @@ public class Persona {
     public Persona(){
      
     }
-    
     //Comportamientos
+    
+    public boolean esMayor(int unaEdad){
+       if(edad > unaEdad) 
+          return true;
+       else
+          return false;
+    }
+    
     
       //Getters
 
