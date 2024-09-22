@@ -51,7 +51,4 @@ public class Persona {
         return aux;
     }
     
-    
-    
-    
 }
