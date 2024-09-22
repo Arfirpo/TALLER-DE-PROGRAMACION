@@ -6,13 +6,13 @@ public class Persona {
    //Declaracion de estado
     private String nombre;
     private int DNI;
-    private int edad; 
+    private int edad;
     
     // Constructor 1 - con tres parametros
     public Persona(String unNombre, int unDNI, int unaEdad){
         nombre = unNombre;
         DNI = unDNI;
-        edad = unaEdad; 
+        edad = unaEdad;
     }
       
     // Constructor 2 - vacio
@@ -27,7 +27,6 @@ public class Persona {
        else
           return false;
     }
-    
     
       //Getters
 
@@ -56,7 +55,6 @@ public class Persona {
     public void setNombre(String unNombre) {
         nombre = unNombre;
     }
-    
       //To String
     
     public String toString(){
