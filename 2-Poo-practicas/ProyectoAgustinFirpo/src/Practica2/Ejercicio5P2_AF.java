@@ -22,7 +22,6 @@ Luego de la carga:
    - Calcular e informar la cantidad de partidos que ganó River.
    - Calcular e informar el total de goles que realizó Boca jugando de local.
  */
-
 package Practica2;
 
 import PaqueteLectura.GeneradorAleatorio;
@@ -30,8 +29,64 @@ import PaqueteLectura.Lector;
 
 public class Ejercicio5P2_AF {
 
+   private static final String corte_visitante = "zzz";
+   private static final String equipo_river = "river";
+   private static final String equipo_boca = "boca";
+   private static final int dimF_partidos = 20;
+
    public static void main(String[] args) {
-      GeneradorAleatorio.iniciar();
+      int dimL = 0;
+      Partido[] vPartidos = new Partido[dimF_partidos];
+      String visitante;
+      int i;
+
+      System.out.print(
+              "Ingrese nombre de equipo Visitante: ");
+      visitante = Lector.leerString();
+
+      System.out.println();
+
+      while (!visitante.equalsIgnoreCase(corte_visitante) && dimL < dimF_partidos) {
+         Partido p = new Partido();
+         p.setVisitante(visitante);
+         System.out.print("Ingrese Goles convertidos por el equipo Visitante: ");
+         p.setGolesVisitante(Lector.leerInt());
+         System.out.println();
+         System.out.print("Ingrese nombre de equipo Local: ");
+         p.setLocal(Lector.leerString());
+         System.out.println();
+         System.out.print("Ingrese goles convertidos por el equipo local: ");
+         p.setGolesLocal(Lector.leerInt());
+         System.out.println();
+         vPartidos[dimL] = p; //guardar partido
+         dimL++;
+         System.out.print("Ingrese nombre de equipo Visitante: ");
+         visitante = Lector.leerString();
+         System.out.println();
+      }
+
+      int cantGanadosRiver = 0;
+      int cantGolesBocaLocal = 0;
+
+      System.out.println();
+      System.out.println("----------| PARTIDOS |----------");
+      System.out.println();
+      for (i = 0; i < dimL; i++) {
+         Partido partidoAct = vPartidos[i];
+         if (partidoAct.hayGanador() && partidoAct.getGanador().equalsIgnoreCase(equipo_river)) {
+            cantGanadosRiver++;
+         }
+         if (partidoAct.getLocal().equalsIgnoreCase(equipo_boca)) {
+            cantGolesBocaLocal += partidoAct.getGolesLocal();
+         }
+         System.out.println(partidoAct.toString());
+         System.out.println();
+      }
+      System.out.println("--------------------------------");
+      System.out.println();
+      System.out.println("River gano " + cantGanadosRiver + " partidos en total.");
+      System.out.println("");
+      System.out.println("Boca metio " + cantGolesBocaLocal + " goles de local.");
+      System.out.println("");
    }
-   
 }

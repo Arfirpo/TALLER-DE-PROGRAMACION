@@ -5,77 +5,80 @@
  */
 package Practica2;
 
-
 public class Partido {
-    private String local;
-    private String visitante;
-    private int golesLocal; 
-    private int golesVisitante;
-    
-    public Partido(){
-    
-    }
 
-    public Partido(String unLocal, String unVisitante, int unGolLocal, int unGolVisitante){
-        local = unLocal;
-        visitante = unVisitante;
-        golesLocal = unGolLocal;
-        golesVisitante = unGolVisitante;
-    }
+   private String local;
+   private String visitante;
+   private int golesLocal;
+   private int golesVisitante;
 
-    
-    public String getLocal() {
-        return local;
-    }
+   public Partido() {
 
-    public String getVisitante() {
-        return visitante;
-    }
+   }
 
-    public int getGolesLocal() {
-        return golesLocal;
-    }
+   public Partido(String unLocal, String unVisitante, int unGolLocal, int unGolVisitante) {
+      local = unLocal;
+      visitante = unVisitante;
+      golesLocal = unGolLocal;
+      golesVisitante = unGolVisitante;
+   }
 
-    public int getGolesVisitante() {
-        return golesVisitante;
-    }
+   public String getLocal() {
+      return local;
+   }
 
-    public void setLocal(String unEquipo) {
-        local = unEquipo;
-    }
+   public String getVisitante() {
+      return visitante;
+   }
 
-    public void setVisitante(String unEquipo) {
-        visitante = unEquipo;
-    }
+   public int getGolesLocal() {
+      return golesLocal;
+   }
 
-    public void setGolesLocal(int unosGoles) {
-        golesLocal = unosGoles;
-    }
+   public int getGolesVisitante() {
+      return golesVisitante;
+   }
 
-    public void setGolesVisitante(int unosGoles) {
-        golesVisitante = unosGoles;
-    }
-    
-    public boolean hayGanador(){
-         return (golesLocal!=golesVisitante); 
-    }
-    
-    public boolean hayEmpate(){
-         return ((golesLocal==golesVisitante));
-    }
-    
-    public String getGanador(){
-         String ganador=new String();
-         if (golesLocal>golesVisitante){
-             ganador = local;
+   public void setLocal(String unEquipo) {
+      local = unEquipo;
+   }
+
+   public void setVisitante(String unEquipo) {
+      visitante = unEquipo;
+   }
+
+   public void setGolesLocal(int unosGoles) {
+      golesLocal = unosGoles;
+   }
+
+   public void setGolesVisitante(int unosGoles) {
+      golesVisitante = unosGoles;
+   }
+
+   public boolean hayGanador() {
+      return (golesLocal != golesVisitante);
+   }
+
+   public boolean hayEmpate() {
+      return ((golesLocal == golesVisitante));
+   }
+
+   public String getGanador() {
+      String ganador = new String();
+      if (golesLocal > golesVisitante) {
+         ganador = local;
+      } else {
+         if (golesLocal < golesVisitante) {
+            ganador = visitante;
          }
-         else {
-             if (golesLocal<golesVisitante){
-                 ganador = visitante;
-             }
-         }
-         return ganador;
-                 
-    }	    
-    
+      }
+      return ganador;
+   }
+   
+   @Override
+   public String toString() {
+      String aux;
+      aux = local + " " + golesLocal + " - " + golesVisitante + " " + visitante;
+      return aux;
+   }
 }
