@@ -1,3 +1,5 @@
+package Practica3;
+
 public class triangulo {
     
     private double lado1;
@@ -70,14 +72,14 @@ public class triangulo {
     //Calculo del Perimetro:
     
     public double calcularPerimetro(){
-      return lado1 + lado2 + lado3;
+        return lado1 + lado2 + lado3;
     }
     
     //Calculo del Area
     
     public double calcularArea(){
-      double semiP = (lado1+lado2+lado3)/2;
-      return Math.sqrt(semiP * (semiP-lado1) * (semiP-lado2) * (semiP-lado3));
+        double semiP = (lado1+lado2+lado3)/2;
+        return Math.sqrt(semiP * (semiP-lado1) * (semiP-lado2) * (semiP-lado3));
     }
     
     //Cadena de texto

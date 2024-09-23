@@ -1,3 +1,5 @@
+package Practica3;
+
 public class Main {
 
   import PaqueteLectura.Lector;
