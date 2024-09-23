@@ -1,6 +1,6 @@
 package Practica3;
 
-public class Main {
+public class Ejercicio1P2_AF {
 
   import PaqueteLectura.Lector;
   
