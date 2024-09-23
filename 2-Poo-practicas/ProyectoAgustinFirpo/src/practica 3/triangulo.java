@@ -6,9 +6,7 @@ public class triangulo {
     private String colorRelleno;
     private String colorLinea;
     
-    
     //Constructores
-    
     
     public triangulo(){
         
