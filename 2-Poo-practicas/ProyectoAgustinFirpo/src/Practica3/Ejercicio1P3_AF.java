@@ -1,9 +1,9 @@
 package Practica3;
 
-public class Ejercicio1P2_AF {
+import PaqueteLectura.Lector;
 
-  import PaqueteLectura.Lector;
-  
+public class Ejercicio1P3_AF {
+
   public static void main(String args[]) {
 
     //declaro objeto triangulo y lo creo vacio.
