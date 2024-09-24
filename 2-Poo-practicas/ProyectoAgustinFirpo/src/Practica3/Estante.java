@@ -85,6 +85,7 @@ public class Estante {
         private int cantLibros;
 
         // Constructor que permite definir la capacidad
+        
         public Estante(int capacidad) {
             this.capacidad = capacidad;
             this.estante = new Libro[this.capacidad];

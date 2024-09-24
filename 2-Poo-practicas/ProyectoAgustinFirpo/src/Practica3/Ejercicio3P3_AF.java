@@ -8,7 +8,7 @@
     (iii) agregar un libro al estante 
     (iv) devolver el libro con un título particular que se recibe.
     B- Realice un programa que instancie un estante. Cargue varios libros. 
-       A partir del estante, busque e informe el autor del libro “Mujercitas”.
+        A partir del estante, busque e informe el autor del libro “Mujercitas”.
     C- Piense: ¿Qué modificaría en la clase definida para ahora permitir estantes que almacenen como máximo N libros? ¿Cómo instanciaría el estante?
  */
 package Practica3;
