@@ -9,68 +9,77 @@
       {Habitación 1: costo, libre u ocupada, información del cliente si está ocupada}
   …   {Habitación N: costo, libre u ocupada, información del cliente si está ocupada} 
   NOTAS: Reúse la clase Persona. Para cada método solicitado piense a qué clase debe delegar la responsabilidad de la operación.
-*/
+ */
 package Practica3;
 
-public class Hotel{
+import PaqueteLectura.GeneradorAleatorio;
 
-  //Variables de instanciacion
+public class Hotel {
 
-  private Habitacion [] hotel; //v.i. - vector de habitaciones.
-  private int capacidadHotel; // v.i. - dimension fisica del vector de habitaciones.
-  private int ocupacionActual; // v.i. - dimension logica del vector de habitaciones
+   //Variables de instanciacion
+   private Habitacion[] hotel; //v.i. - vector de habitaciones.
+   private int capacidadHotel; // v.i. - dimension fisica del vector de habitaciones.
+   private int ocupacionActual; // v.i. - dimension logica del vector de habitaciones
 
-  //constructor
+   //constructor
+   public Hotel(int unaCapacidad) {
+      GeneradorAleatorio.iniciar();
+      this.capacidadHotel = unaCapacidad;
+      this.hotel = new Habitacion[this.capacidadHotel];
+      for (int i = 0; i < this.capacidadHotel; i++) {
+         this.hotel[i] = new Habitacion(2000 + GeneradorAleatorio.generarDouble(8000 - 2000 + 1));
+      }
+      this.ocupacionActual = 0;
+   }
 
-  public Hotel(int unaCapacidad){
-    this.capacidadHotel = unaCapacidad
-    this.hotel = new Habitacion[this.capacidadHotel];
-    for(int i=0; i<this.capacidadHotel;i++){
-      Habitacion habitacion = this.hotel[i];
-      habitacion.setOcupacion(false);
-    }
-    this.ocupacionActual = 0;
-  }
+   //comportamiento
+   //Getters
+   public int getCapacidadHotel() {
+      return this.capacidadHotel;
+   }
 
-  //comportamiento
+   public int getOcupacionActual() {
+      return this.ocupacionActual;
+   }
 
-  //Getters
+   public boolean habitacionOcupada(int nroHabitacion) {
+      return this.hotel[nroHabitacion].getOcupacion();
+   }
 
-  public int getCapacidadHotel(){
-    return this.capacidadHotel;
-  }
+   public void mostrarHotel() {
+      for (int i = 0; i < this.capacidadHotel; i++) {
+         Habitacion habitacion = this.hotel[i];
+         System.out.println("Habitacion Nro. " + (i + 1) + habitacion.toString());
+         System.out.println("");
+      }
+   }
 
-  public int getOcupacionActual(){
-    return this.ocupacionActual;
-  }
+   public void mostrarHabitacionesReservadas() {
+      for (int i = 0; i < this.capacidadHotel; i++) {
+         if (hotel[i].getOcupacion()) {
+            System.out.println("Habitación Nro. " + (i + 1) + hotel[i].toString() + "\n");
+         }
+      }
+   }
 
-  public void mostrarHotel(){
-    for(int i = 0; i< this.ocupacionActual; i++){
-      Habitacion habitacion = this.hotel[i];
-      System.out.print("Habitacion Nro. " + (i+1) + " | Costo: " + habitacion.getPrecio() + " | Estado: " + habitacion.getEstadoOcupacion() + " | ");
-      if(!Habitacion.estaLibre())
-        System.out.print("por el cliente: " + habitacion.getHuesped().toString());
-    }
+   //Setters.
+   //Reservar una Habitacion al Hotel.
+   public boolean reservarHabitacion(Cliente unHuesped) {
+      Habitacion habitacion = this.hotel[unHuesped.getNroHabitacion()];
+      if (this.ocupacionActual < this.capacidadHotel && !habitacion.getOcupacion()) {
+         habitacion.setOcupacion(true);
+         habitacion.setHuesped(unHuesped);
+         this.ocupacionActual++;
+         return true;
+      } else {
+         return false;
+      }
+   }
 
-  //Setters.
-  
-  //Agregar una Habitacion al Hotel.
-  public void agregarHabitacion(Habitacion unaHabitacion){
-    if(this.ocupacionActual < this.capacidadHotel){
-      if(this.hotel[])
-      this.hotel[this.ocupacionActual] = unaHabitacion;
-      this.ocupacionActual++;
-    } else{
-      System.out.println("El Hotel posee todas sus habitaciones ocupadas.");
-    }
-  }
-
-  public void aumentarPrecio(double unMonto){
-    for(int i=0;i<this.ocupacionActual;i++){
-      Habitacion habitacion = this.hotel[i];
-      habitacion.setCostoNoche(habitacion.getCostoNoche() + unMonto);
-    }
-  }
-
-  }
+   public void aumentarPrecio(double unMonto) {
+      for (int i = 0; i < this.capacidadHotel; i++) {
+         Habitacion habitacion = this.hotel[i];
+         habitacion.setCostoNoche(habitacion.getCostoNoche() + unMonto);
+      }
+   }
 }

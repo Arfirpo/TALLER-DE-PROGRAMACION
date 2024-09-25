@@ -10,68 +10,61 @@
       {Habitación 1: costo, libre u ocupada, información del cliente si está ocupada}
   …   {Habitación N: costo, libre u ocupada, información del cliente si está ocupada} 
   NOTAS: Reúse la clase Persona. Para cada método solicitado piense a qué clase debe delegar la responsabilidad de la operación.
-*/
-
+ */
 package Practica3;
 
-public class Habitacion{
+import java.text.DecimalFormat;
 
-  //Variables de instanciacion.
+public class Habitacion {
 
-  private double costoNoche;
-  private boolean ocupacion;
-  private Cliente huesped = null;
-  
-  //Constructor.
+   //Variables de instanciacion.
+   private double costoNoche;
+   private boolean ocupacion;
+   private Cliente huesped;
 
-  public Habitacion(){
+   //Constructor.
+   public Habitacion() {
 
-  }
+   }
 
-  //Getters.
+   public Habitacion(double costoNoche) {
+      this.costoNoche = costoNoche;
+      this.ocupacion = false;
+   }
 
-  public String estadoOcupacion(){
-    if(ocupacion)
-      return "reservada";
-    else
-      return "libre";
-  }
+   //Getters.
+   public String estadoOcupacion() {
+      return ocupacion ? "reservada" : "libre";
+   }
 
-  public getOcupacion(){
-    return this.ocupacion:
-  }
+   public Cliente getHuesped() {
+      return this.huesped;
+   }
 
-  public getCostoNoche(){
-    return costoNoche;
-  }
+   public boolean getOcupacion() {
+      return this.ocupacion;
+   }
 
-  //Setters.
+   public double getCostoNoche() {
+      return this.costoNoche;
+   }
 
-  public void setOcupacion(boolean unEstado){
-    this.ocupacion = unEstado;
-  }
+   //Setters.
+   public void setOcupacion(boolean unEstado) {
+      this.ocupacion = unEstado;
+   }
 
-  public void setCostoNoche(double unMonto){
-    this.costoNoche = unMonto;
-  }
+   public void setCostoNoche(double unMonto) {
+      this.costoNoche = unMonto;
+   }
 
-  public void setHuesped(Cliente unHuesped){
-    this.huesped = unHuesped;
-  }
-  
+   public void setHuesped(Cliente unHuesped) {
+      this.huesped = unHuesped;
+   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   public String toString() {
+      DecimalFormat df = new DecimalFormat("0.00");
+      String info = " | Costo: $" + df.format(costoNoche) + " | Estado: " + estadoOcupacion();
+      return ocupacion ? info + " | " + huesped.toString() : info;
+   }
 }
