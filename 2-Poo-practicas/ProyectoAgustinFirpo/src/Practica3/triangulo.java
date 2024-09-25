@@ -16,11 +16,11 @@ public class triangulo {
     
     public triangulo(double unLado, double dosLado, double tresLado, String unColorRelleno, String unColorLinea){
         
-        lado1 = unLado;
-        lado2 = dosLado;
-        lado3 = tresLado;
-        colorRelleno = unColorRelleno;
-        colorLinea = unColorLinea;
+        setLado1(unLado);
+        setLado2(dosLado);
+        setLado3(tresLado);
+        setColorRelleno(unColorRelleno);
+        setColorLinea(unColorLinea);
     }
     
     //Comportamientos:
