@@ -1,6 +1,6 @@
 package Practica3;
 
-public class triangulo {
+public class Triangulo {
     
     private double lado1;
     private double lado2;
@@ -10,11 +10,11 @@ public class triangulo {
     
     //Constructores
     
-    public triangulo(){
+    public Triangulo(){
         
     }
     
-    public triangulo(double unLado, double dosLado, double tresLado, String unColorRelleno, String unColorLinea){
+    public Triangulo(double unLado, double dosLado, double tresLado, String unColorRelleno, String unColorLinea){
         
         setLado1(unLado);
         setLado2(dosLado);
