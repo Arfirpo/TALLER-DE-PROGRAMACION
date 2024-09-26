@@ -18,7 +18,7 @@ public class Ejercicio1P3_AF {
   public static void main(String args[]) {
 
     //declaro objeto triangulo y lo creo vacio.
-    Triangulo t = new triangulo();
+    Triangulo t = new Triangulo();
 
     //Cargo los valores del triagulo.
     System.out.print("Ingrese medida del lado 1: ");
