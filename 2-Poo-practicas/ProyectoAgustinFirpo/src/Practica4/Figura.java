@@ -1,46 +1,48 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Practica4;
 
+import java.text.DecimalFormat;
+
 public abstract class Figura {
-
-    private String colorRelleno;
-    private String colorLinea;
-
-    public Figura(String unCR, String unCL) {
-        setColorRelleno(unCR);
-        setColorLinea(unCL);
-    }
-
-
-    public String getColorRelleno() {
-        return colorRelleno;
-    }
-
-    public void setColorRelleno(String unColor) {
-        colorRelleno = unColor;
-    }
-
-    public String getColorLinea() {
-        return colorLinea;
-    }
-
-    public void setColorLinea(String unColor) {
-        colorLinea = unColor;
-    }
-
-    public abstract double calcularArea();
-
-    public abstract double calcularPerimetro();
-
-    @Override
-    public String toString() {
-        String aux = "Area: " + this.calcularArea()
-                + " CR: " + getColorRelleno()
-                + " CL: " + getColorLinea();
-        return aux;
-    }
+  
+  private String colorRelleno;
+  private String colorLinea;
+  
+  public Figura(String unCR, String unCL) {
+    setColorRelleno(unCR);
+    setColorLinea(unCL);
+  }
+  
+  public String getColorRelleno() {
+    return colorRelleno;
+  }
+  
+  public void setColorRelleno(String unColor) {
+    colorRelleno = unColor;
+  }
+  
+  public String getColorLinea() {
+    return colorLinea;
+  }
+  
+  public void setColorLinea(String unColor) {
+    colorLinea = unColor;
+  }
+  
+  public void despintar() {
+    setColorRelleno("blanco");
+    setColorLinea("negra");
+  }
+  
+  public abstract double calcularArea();
+  
+  public abstract double calcularPerimetro();
+  
+  @Override
+  public String toString() {
+    DecimalFormat df = new DecimalFormat("0.00");
+    String aux = "Area: " + df.format(calcularArea()) + "\n"
+            + "Perimetro " + df.format(calcularPerimetro()) + "\n" + "CR: " + getColorRelleno() + "\n"
+            + "CL: " + getColorLinea() + "\n";
+    return aux;
+  }
 }
