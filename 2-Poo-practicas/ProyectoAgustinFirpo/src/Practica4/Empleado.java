@@ -50,12 +50,13 @@ public abstract class Empleado{
 
   public double calcularSueldoACobrar(){
     double aux = this.getSueldoBasico() + this.calcularExtraAntiguedad();
-    if(this.calcularEfectividad() > 0) aux += this.getSueldoBasico();
+    if(pagarBono()) aux += this.getValorBono();
     return aux
   };
 
-  public abstract double calcularSueldoACobrar();
   public abstract double calcularEfectividad();
+  public abstract double getValorBono();
+  public abstract boolean pagarBono();
 
   public String toString(){
     String aux = "Nombre: " + this.getNombre() + "\n"
