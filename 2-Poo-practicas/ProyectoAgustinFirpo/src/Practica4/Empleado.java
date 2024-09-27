@@ -1,5 +1,7 @@
 package Practica4;
 
+import java.text.DecimalFormat;
+
 public abstract class Empleado{
 
   private String nombre;
@@ -7,6 +9,9 @@ public abstract class Empleado{
   private int antiguedad;
 
   //Constructor
+  
+  public Empleado(){
+  }
 
   public Empleado(String unNombre, double unSueldoBasico, int unaAntiguedad){
     this.setNombre(unNombre);
@@ -16,17 +21,19 @@ public abstract class Empleado{
 
   //Setters
 
-  public void setNombre(unNombre){
+  public void setNombre(String unNombre){
     this.nombre = unNombre;
   }
 
-  public void setSueldoBasico(unSueldoBasico){
+  public void setSueldoBasico(double unSueldoBasico){
     this.sueldoBasico = unSueldoBasico;
   }
 
-  public void setAntiguedad(unaAntiguedad){
+  public void setAntiguedad(int unaAntiguedad){
     this.antiguedad = unaAntiguedad;
   }
+  
+  
 
   //Getters
 
@@ -51,17 +58,20 @@ public abstract class Empleado{
   public double calcularSueldoACobrar(){
     double aux = this.getSueldoBasico() + this.calcularExtraAntiguedad();
     if(pagarBono()) aux += this.getValorBono();
-    return aux
+    return aux;
   };
 
   public abstract double calcularEfectividad();
   public abstract double getValorBono();
   public abstract boolean pagarBono();
-
+  
+  @Override
   public String toString(){
+    DecimalFormat df = new DecimalFormat("0.00");
+    DecimalFormat mf = new DecimalFormat("#,###.00");
     String aux = "Nombre: " + this.getNombre() + "\n"
-                + "Sueldo a cobrar: " + this.calcularSueldoACobrar + "\n"
-                + "Efectividad: " + this.calcularEfectividad() + "\n";
+                + "Sueldo a cobrar: $" + mf.format(this.calcularSueldoACobrar()) + "\n"
+                + "Efectividad: " + df.format(this.calcularEfectividad()*100) + "%\n";
     return aux;
   }
 

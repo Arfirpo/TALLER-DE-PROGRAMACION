@@ -18,14 +18,43 @@ F- Realizar un programa que instancie un jugador y un entrenador. Informe la rep
 
 NOTA: para cada método a implementar piense en que clase/s debe definir el método.
  */
-
 package Practica4;
+
+import PaqueteLectura.Lector;
 
 public class Ejercicio2P4_AF {
 
-
-    public static void main(String[] args) {
-        
-    }
+  public static void main(String[] args) {
+    Jugador j = new Jugador();
+    Entrenador e = new Entrenador();
     
+    System.out.println("---------- | Carga de datos Jugador | ----------\n");
+    System.out.print("Ingrese Nombre del jugador: ");
+    j.setNombre(Lector.leerString());
+    System.out.print("Ingrese sueldo basico del jugador: ");
+    j.setSueldoBasico(Lector.leerDouble());
+    System.out.print("Ingrese antiguedad del jugador: ");
+    j.setAntiguedad(Lector.leerInt());
+    System.out.print("Ingrese partidos jugados: ");
+    j.setPartidosJugados(Lector.leerInt());
+    System.out.print("Ingrese goles anotados: ");
+    j.setGolesAnotados(Lector.leerInt());
+    System.out.println("----------------------------\n");
+    
+    System.out.println("---------- | Carga de datos Entrenador | ----------\n");
+    System.out.print("Ingrese Nombre del entrenador: ");
+    e.setNombre(Lector.leerString());
+    System.out.print("Ingrese sueldo basico del entrenador: ");
+    e.setSueldoBasico(Lector.leerDouble());
+    System.out.print("Ingrese antiguedad del entrenador: ");
+    e.setAntiguedad(Lector.leerInt());
+    System.out.print("Ingrese campeonatos ganados: ");
+    e.setCampeonatosGanados(Lector.leerInt());
+    System.out.println("----------------------------\n");
+    System.out.println("---------- | Datos Jugador | ----------\n");
+    System.out.println(j.toString());
+    System.out.println("---------- | Datos Entrenador | ----------\n");
+    System.out.println(e.toString());
+  }
+
 }

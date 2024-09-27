@@ -2,15 +2,12 @@ package Practica4;
 
 public class Jugador extends Empleado{
 
-  private int partidosJugados = 0;
-  private int golesAnotados = 0;
+  private int partidosJugados;
+  private int golesAnotados;
   
   //Constructores
 
-  public Jugador(String unNombre, double unSueldoBasico, int unaAntiguedad){
-    super(unNombre,unSueldoBasico,unaAntiguedad);
-    this.setPartidosJugados(0);
-    this.setGolesAnotados(0);
+  public Jugador(){
   }
 
   public Jugador(String unNombre, double unSueldoBasico, int unaAntiguedad, int partidosJugados,int golesAnotados){
@@ -49,13 +46,24 @@ public class Jugador extends Empleado{
   }
 
   //Otros Metodos
-
+  
+  @Override
   public double calcularEfectividad(){
-    return this.getGolesAnotados() / this.getPartidosJugados();
+    return this.getPartidosJugados() > 0 ? (double) this.getGolesAnotados() / this.getPartidosJugados() : 0;
   };
 
-  //Objeto en Cadena de texto.
+  @Override
+  public double getValorBono() {
+    return this.getSueldoBasico();
+  }
 
+  @Override
+  public boolean pagarBono() {
+    return (this.calcularEfectividad() > 0.5);
+  }
+
+  //Objeto en Cadena de texto.
+  @Override
   public String toString(){
     String aux = super.toString() 
             + "Partidos Jugados: " + this.getPartidosJugados() + "\n"
