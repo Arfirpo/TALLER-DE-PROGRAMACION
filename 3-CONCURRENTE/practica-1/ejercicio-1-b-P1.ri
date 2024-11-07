@@ -1,0 +1,52 @@
+{Modifique el programa anterior para que el mismo robot realice lo mismo en las
+avenidas 1, 3 y 5}
+programa ejercicio1bP1
+procesos
+
+  proceso juntarFlores(ES cantFlores: numero; ES esqSinFlor: numero)
+  comenzar
+    si(HayFlorEnLaEsquina)
+      mientras(HayFlorEnLaEsquina)
+        tomarFlor
+        cantFlores := cantFlores + 1
+    sino
+      esqSinFlor := esqSinFlor + 1
+  fin
+
+  proceso recorrerAvenida(E calle: numero)
+  variables
+    cantFlores,esqSinFlor: numero
+  comenzar
+    cantFlores := 0
+    esqSinFlor := 0
+    repetir calle - 1
+      juntarFlores(cantFlores,esqSinFlor)
+      mover
+    juntarFlores(cantFlores,esqSinFlor)
+    repetir cantFlores
+      depositarFlor
+    Informar(cantFlores)
+    Informar(esqSinFlor)
+  fin
+
+areas
+  ciudad: AreaC(1,1,40,40)
+robots
+  robot robot1
+  variables
+    calle: numero
+    avenida: numero
+  comenzar
+    calle := 40
+    avenida:= 1
+    repetir 3
+      recorrerAvenida(calle)
+      avenida:= avenida + 2
+      Pos(avenida,1)
+  fin
+variables
+  Rinfo: robot1
+comenzar
+  AsignarArea(Rinfo,ciudad)
+  Iniciar(Rinfo,1,1)
+fin

@@ -1,0 +1,193 @@
+programa ejercicio2P3
+procesos
+  {-----------------------------------}
+  proceso volver
+  comenzar
+    repetir 2
+      derecha
+    mover
+  fin
+  {-----------------------------------}
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  {-----------------------------------}
+  proceso juntarFlores(ES cantFlores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  {-----------------------------------}
+  proceso juntarPapeles(ES cantPapeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+  fin
+  {-----------------------------------}
+  proceso escalonFinalA(E id: numero; ES cantFlores: numero)
+  variables
+    ok: boolean
+  comenzar
+    ok := V
+    mover
+    derecha
+    si(HayFlorEnLaEsquina)
+      juntarFlores(cantFlores)
+    BloquearEsquina(15,15)
+    mover
+    EnviarMensaje(id,j)
+    volver
+    LiberarEsquina(15,15)
+  fin
+  {-----------------------------------}
+  proceso escalonFinalB(E id: numero; ES cantPapeles: numero)
+  variables
+    ok: boolean
+  comenzar
+    ok := V
+    mover
+    izquierda
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(cantPapeles)
+    BloquearEsquina(15,15)
+    mover
+    EnviarMensaje(id,j)
+    volver
+    LiberarEsquina(15,15)
+  fin
+  {-----------------------------------}
+  proceso escalonA(E lado: numero; ES cantFlores: numero)
+  comenzar
+    repetir lado
+      mover
+    derecha
+    si(HayFlorEnLaEsquina)
+      juntarFlores(cantFlores)
+    repetir lado
+      mover
+    izquierda
+    si(HayFlorEnLaEsquina)
+      juntarFlores(cantFlores)
+  fin  
+  {-----------------------------------}
+  proceso escalonB(E lado: numero; ES cantPapeles: numero)
+  comenzar
+    repetir lado
+      mover
+    izquierda
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(cantPapeles)
+    repetir lado
+      mover
+    derecha
+    si(HayPapelEnLaEsquina)
+      juntarPapeles(cantPapeles)
+  fin  
+  {-----------------------------------}
+  proceso escaleraA(E escalones: numero; ES lado: numero; ES cantFlores: numero)
+  comenzar
+    repetir escalones
+      escalonA(lado,cantFlores)
+      lado := lado - 1
+  fin
+  {-----------------------------------}
+  proceso escaleraB(E escalones: numero; ES lado: numero; ES cantFlores: numero)
+  comenzar
+    repetir escalones
+      escalonA(lado,cantFlores)
+      lado := lado + 1
+  fin
+  {-----------------------------------}
+  proceso escaleraC(E escalones: numero; ES lado: numero; ES cantPapeles: numero)
+  comenzar
+    repetir escalones
+      escalonB(lado,cantPapeles)
+      lado := lado - 1
+  fin
+  {-----------------------------------}
+  proceso escaleraD(E escalones: numero; ES lado: numero; ES cantPapeles: numero)
+  comenzar
+    repetir escalones
+      escalonB(lado,cantPapeles)
+      lado := lado + 1
+  fin
+  {-----------------------------------}
+  proceso asignarId
+  comenzar
+    EnviarMensaje(1,c1)
+    EnviarMensaje(2,c2)
+  fin
+  {-----------------------------------}
+areas
+  areaIni: AreaP(1,1,1,1)
+  areaC1: AreaP(1,2,15,30)
+  areaC2: AreaP(17,1,31,30)
+  areaJuez: AreaP(15,1,15,1)
+  meta: AreaPC(16,16,16,16)
+robots
+  robot competidor1
+  variables
+    escalones,lado,id,cantFlores: numero
+    ok: boolean
+  comenzar
+    ok := V
+    cantFlores := 0
+    RecibirMensaje(id,j)
+    escalones := 4
+    lado := 5
+    escaleraA(escalones,lado,cantFlores)
+    escalonFinalA(id,cantFlores)
+    lado := lado + 1
+    escaleraB(escalones,lado,cantFlores)
+    Informar(cantFlores)
+    EnviarMensaje(ok,j)
+  fin
+  robot competidor2
+  variables
+    escalones,lado,id,cantPapeles: numero
+    ok: boolean
+  comenzar
+    cantPapeles := 0
+    ok := V
+    RecibirMensaje(id,j)
+    escalones := 4
+    lado := 5
+    escaleraC(escalones,lado,cantPapeles)
+    escalonFinalB(id,cantPapeles)
+    lado := lado + 1
+    escaleraD(escalones,lado,cantPapeles)
+    Informar(cantPapeles)
+    EnviarMensaje(ok,j)
+  fin
+  robot juez
+  variables
+    llego,ganador: numero
+    ok: boolean
+  comenzar
+    asignarId
+    RecibirMensaje(llego,*)
+    ganador := llego
+    RecibirMensaje(llego,*)
+    repetir 2
+      RecibirMensaje(ok,*)
+    Informar('ganador',ganador)
+  fin
+variables
+  j: juez
+  c1: competidor1
+  c2: competidor2
+comenzar
+  AsignarArea(j,areaJuez)
+  AsignarArea(c1,areaC1)
+  AsignarArea(c1,areaIni)
+  AsignarArea(c2,areaC2)
+  AsignarArea(c1,meta)
+  AsignarArea(c2,meta)
+  Iniciar(c1,1,1)
+  Iniciar(c2,31,1)
+  Iniciar(j,15,1)
+fin

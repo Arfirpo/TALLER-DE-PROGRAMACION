@@ -1,0 +1,101 @@
+{Realice un programa en el que 4 robots limpien de papeles el perímetro de un cuadrado
+de lado 20 en sentido horario. 
+El vértice inferior izquierdo del cuadrado se ubica en la esquina (10,10).
+Al finalizar, cada robot debe informar la cantidad de papeles juntados en su lado.
+Al realizar este programa, analizar:
+a) ¿Cómo deben declararse la o las áreas?
+b) ¿Existe riesgo de colisión?}
+
+programa ejercicio2P1
+procesos
+
+  proceso juntarPapeles(ES cantPapeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+  fin
+
+  proceso recorrerLado(E lado: numero)
+  variables
+    cantPapeles: numero
+  comenzar
+    cantPapeles := 0
+    repetir lado - 1
+      juntarPapeles(cantPapeles)
+      mover
+    juntarPapeles(cantPapeles)
+    Informar(cantPapeles)
+  fin 
+areas
+  areaC1: AreaPC(10,10,10,10)
+  areaP1: AreaP(10,11,10,29)
+  areaC2: AreaPC(10,30,10,30)
+  areaP2: AreaP(11,30,29,30)
+  areaC3: AreaPC(30,30,30,30)
+  areaP3: AreaP(30,11,30,29)
+  areaC4: AreaPC(30,10,30,10)
+  areaP4: AreaP(11,10,29,10)
+
+robots
+  robot robot1
+  variables
+    lado: numero
+  comenzar
+    lado := 20
+    recorrerLado(lado) 
+  fin
+  robot robot2
+  variables
+    lado: numero
+  comenzar
+    lado := 20
+    derecha
+    recorrerLado(lado)
+  fin
+  robot robot3
+  variables
+    lado: numero
+  comenzar
+    lado := 20
+    repetir 2
+      derecha
+    recorrerLado(lado)
+  fin
+  robot robot4
+  variables
+    lado: numero
+  comenzar
+    lado := 20
+    repetir 3
+      derecha
+    recorrerLado(lado)
+  fin
+variables
+  r1: robot1
+  r2: robot2
+  r3: robot3
+  r4: robot4
+comenzar
+  AsignarArea(r1,areaP1)
+  AsignarArea(r2,areaP2)
+  AsignarArea(r3,areaP3)
+  AsignarArea(r4,areaP4)
+
+  AsignarArea(r1,areaC1)
+  AsignarArea(r1,areaC2)
+
+  AsignarArea(r2,areaC2)
+  AsignarArea(r2,areaC3)
+
+  AsignarArea(r3,areaC3)
+  AsignarArea(r3,areaC4)
+  
+  AsignarArea(r4,areaC4)
+  AsignarArea(r4,areaC1)
+
+  Iniciar(r1,10,10)
+  Iniciar(r2,10,30)
+  Iniciar(r3,30,30)
+  Iniciar(r4,30,10)
+fin

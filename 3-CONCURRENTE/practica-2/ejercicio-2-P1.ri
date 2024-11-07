@@ -1,0 +1,134 @@
+
+{Realice un programa en el que 3 robots realizan una escalera de 4 escalones cada uno.Todos los escalones tienen un ancho fijo de 1, y un alto aleatorio entre 1 y 5.
+Al finalizar el recorrido, cada robot deberá enviar al robot jefe la cantidad de escalones que tenían más flores que papeles.
+Una vez que los tres robots finalizaron, el robot jefe deberá informar la suma de las cantidades enviadas por los 3 robots.
+  El robot jefe inicia en la esquina (1,1).
+  El robot 1 inicia en la esquina (2,1). 
+  El robot 2 inicia en la esquina (7,1).
+  El robot 3 inicia en la esquina (12,1).}
+programa ejercicio2P2
+procesos
+  {---------------------------------------------}
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  {---------------------------------------------}
+  proceso juntarPapeles(ES cantPapeles: numero)
+  variables
+    papelesTomados: numero
+  comenzar
+    papelesTomados := 0
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+      papelesTomados := papelesTomados + 1
+    devolverPapeles(papelesTomados)
+  fin
+  {---------------------------------------------}
+  proceso devolverPapeles(E papelesTomados: numero)
+  comenzar
+    repetir papelesTomados
+      depositarPapel
+  fin
+  {---------------------------------------------}
+  proceso juntarFlores(ES cantFlores: numero)
+  variables
+    floresTomadas: numero
+  comenzar
+    floresTomadas := 0
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+      floresTomadas := floresTomadas + 1
+    devolverFlores(floresTomadas)
+  fin
+  {---------------------------------------------}
+  proceso devolverFlores(E floresTomadas: numero)
+  comenzar
+    repetir floresTomadas
+      depositarFlor
+  fin
+  {---------------------------------------------}
+  proceso contarFloresYpapeles(ES cantPapeles: numero; ES cantFlores: numero)    
+  comenzar
+    juntarPapeles(cantPapeles)
+    juntarFlores(cantFlores)
+  fin
+  {---------------------------------------------}
+  proceso evaluarCondicion(E cantPapeles: numero; E cantFlores: numero; ES cantCondicion: numero)
+  comenzar
+    si(cantFlores > cantPapeles)
+      cantCondicion := cantCondicion + 1
+  fin
+  {---------------------------------------------}
+  proceso escalon(E ancho: numero; E alto: numero; ES cantCondicion: numero)
+  variables
+    cantPapeles,cantFlores: numero
+  comenzar
+    cantFlores := 0
+    cantFlores := 0
+    repetir alto
+      contarFloresYpapeles(cantPapeles,cantFlores)
+      mover
+    repetir ancho
+      contarFloresYpapeles(cantPapeles,cantFlores)
+      derecha
+      mover
+      izquierda
+    contarFloresYpapeles(cantPapeles,cantFlores)
+    evaluarCondicion(cantPapeles,cantFlores,cantCondicion)
+  fin
+  {---------------------------------------------}
+  proceso escalera(E cantEscalones: numero; ES cantCondicion: numero)
+  variables
+    ancho,alto: numero
+  comenzar
+    cantCondicion := 0
+    ancho := 1
+    repetir cantEscalones
+      Random(alto,1,5)
+      escalon(ancho,alto,cantCondicion)
+  fin
+  {---------------------------------------------}
+areas
+  ciudad1: AreaP(2,1,6,21)
+  ciudad2: AreaP(7,1,11,21)
+  ciudad3: AreaP(12,1,16,21)
+  ciudad4: AreaP(1,1,1,1)
+robots
+  robot robot1
+  variables
+    cantEscalones,cantCondicion: numero
+  comenzar
+    cantEscalones := 4
+    cantCondicion := 0
+    escalera(cantEscalones,cantCondicion)
+    EnviarMensaje(cantCondicion,jefe)
+  fin
+  robot robot2
+  variables
+    cantCondicion,totCondicion: numero
+  comenzar
+    totCondicion := 0
+    repetir 3
+      RecibirMensaje(cantCondicion,*)
+      totCondicion := totCondicion + cantCondicion
+    Informar(totCondicion)
+  fin
+variables
+  r1: robot1
+  r2: robot1
+  r3: robot1
+  jefe: robot2
+comenzar
+  AsignarArea(r1,ciudad1)
+  AsignarArea(r2,ciudad2)
+  AsignarArea(r3,ciudad3)
+  AsignarArea(jefe,ciudad4)
+  Iniciar(jefe,1,1)
+  Iniciar(r1,2,1)
+  Iniciar(r2,7,1)
+  Iniciar(r3,12,1)
+fin

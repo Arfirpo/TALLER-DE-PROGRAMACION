@@ -1,0 +1,145 @@
+programa ejercicio4P2
+procesos
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1,recolector1)
+    EnviarMensaje(2,recolector2)
+    EnviarMensaje(3,recolector3)
+    EnviarMensaje(4,recolector4)
+  fin
+  {-------------------------------------------------}
+  proceso avisarRobot(E id: numero; E ok: boolean)    
+  comenzar
+    si(id = 1)
+      EnviarMensaje(ok,recolector1)
+    sino
+      si(id = 2)
+        EnviarMensaje(ok,recolector2)
+      sino
+        si(id = 3)
+          EnviarMensaje(ok,recolector3)
+        sino
+          EnviarMensaje(ok,recolector4)
+  fin
+  {-------------------------------------------------}
+  proceso limpiarEsquina(ES cantJuntados: numero)    
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantJuntados := cantJuntados + 1
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantJuntados := cantJuntados + 1
+  fin
+  {-------------------------------------------------}
+  proceso recibirCantidades(ES quienEs: numero; ES cantJuntados: numero)
+  comenzar
+    si(quienEs = 1)
+      RecibirMensaje(cantJuntados,recolector1)
+    sino
+      si(quienEs = 2)
+        RecibirMensaje(cantJuntados,recolector2)
+      sino
+        si(quienEs = 3)
+          RecibirMensaje(cantJuntados,recolector3)
+        sino
+          RecibirMensaje(cantJuntados,recolector4)
+  fin
+  {-------------------------------------------------}
+  proceso evaluarMax(E quienEs: numero; E cantJuntados: numero; ES robotMax: numero; ES cantMax: numero)
+  comenzar
+    si(cantJuntados > cantMax)
+      cantMax := cantJuntados
+      robotMax := quienEs
+  fin  
+  {-------------------------------------------------}
+  proceso avisarFin(E ok: boolean)
+  comenzar
+    EnviarMensaje(ok,recolector1)
+    EnviarMensaje(ok,recolector2)
+    EnviarMensaje(ok,recolector3)
+    EnviarMensaje(ok,recolector4)
+  fin
+  {-------------------------------------------------}
+areas
+  areaRecolectores: AreaPC(25,25,75,75)
+  areaFiscal: AreaP(1,1,1,1)
+  areaRec1: AreaP(25,1,25,1)
+  areaRec2: AreaP(30,1,30,1)
+  areaRec3: AreaP(35,1,35,1)
+  areaRec4: AreaP(40,1,40,1)
+robots
+  robot robot1
+  variables
+    ID,quienEs,cantMax,robotMax,cantJuntados: numero
+    ok,ganador: boolean
+  comenzar
+    ok := V
+    asignarID
+    repetir 10
+      Random(ID,1,4)
+      avisarRobot(ID,ok)
+      RecibirMensaje(ok,*)
+    ok := F
+    avisarFin(ok)
+    repetir 4
+      RecibirMensaje(quienEs,*)
+      recibirCantidades(quienEs,cantJuntados)
+      evaluarMax(quienEs,cantJuntados,robotMax,cantMax)
+    ID := 1
+    repetir 4
+      si(ID = robotMax)
+        ok := V
+      sino
+        ok := F
+      avisarRobot(ID,ok)
+      ID := ID + 1
+    Informar('Ganador: ',robotMax)
+  fin
+  robot robot2
+  variables
+    quienSoy,avIni,caIni,avFin,caFin,cantJuntados: numero
+    ok,gane: boolean
+  comenzar
+    cantJuntados := 0
+    avIni := PosAv
+    caIni := PosCa
+    RecibirMensaje(quienSoy,fiscal)
+    RecibirMensaje(ok,fiscal)
+    mientras(ok)
+      Random(avFin,25,75)
+      Random(caFin,25,75)
+      Pos(avFin,caFin)
+      limpiarEsquina(cantJuntados)
+      Pos(avIni,caIni)
+      EnviarMensaje(ok,fiscal)
+      RecibirMensaje(ok,fiscal)
+    EnviarMensaje(quienSoy,fiscal)
+    EnviarMensaje(cantJuntados,fiscal)
+    RecibirMensaje(gane,fiscal)
+    si(gane)
+      Pos(50,50)
+  fin
+variables
+  fiscal: robot1
+  recolector1: robot2
+  recolector2: robot2
+  recolector3: robot2
+  recolector4: robot2
+comenzar
+  AsignarArea(fiscal,areaFiscal)
+  AsignarArea(recolector1,areaRec1)
+  AsignarArea(recolector1,areaRecolectores)
+  AsignarArea(recolector2,areaRec2)
+  AsignarArea(recolector2,areaRecolectores)
+  AsignarArea(recolector3,areaRec3)
+  AsignarArea(recolector3,areaRecolectores)
+  AsignarArea(recolector4,areaRec4)
+  AsignarArea(recolector4,areaRecolectores)
+  Iniciar(fiscal,1,1)
+  Iniciar(recolector1,25,1)
+  Iniciar(recolector2,30,1)
+  Iniciar(recolector3,35,1)
+  Iniciar(recolector4,40,1)
+fin
+

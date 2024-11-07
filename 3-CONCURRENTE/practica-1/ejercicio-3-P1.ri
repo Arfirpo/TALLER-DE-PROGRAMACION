@@ -1,0 +1,98 @@
+{Realice un programa en el que 3 robots realicen escaleras de 4 escalones, en las que el
+tamaño de cada escalón se incrementa en un 1 respecto al escalón anterior. El primer
+escalón será de 1x1, el segundo de 2x2, y así sucesivamente.
+Al finalizar el recorrido, cada robot debe informar la cantidad de escalones en los que la
+cantidad de papeles superó en 1 a la cantidad de flores. Durante el recorrido, no se debe
+modificar el contenido de las esquinas.}
+
+programa ejercicio3P1
+procesos
+
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  
+  proceso contarFlores(ES cantFlores: numero)
+  variables
+    floresTomadas: numero
+  comenzar
+    floresTomadas := 0
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+      floresTomadas := floresTomadas + 1
+    repetir floresTomadas
+      depositarFlor
+  fin
+
+  proceso contarPapeles(ES cantPapeles: numero)
+  variables
+    papelesTomados: numero
+  comenzar
+    papelesTomados := 0
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+      papelesTomados := papelesTomados + 1
+    repetir papelesTomados
+      depositarPapel
+  fin
+
+  proceso evaluarCondicion(E cantFlores: numero; E cantPapeles: numero; ES cantCondicion: numero)    
+  comenzar
+    si(cantPapeles - cantFlores = 1)
+      cantCondicion := cantCondicion + 1
+  fin
+    
+  proceso hacerEscalon(E tamañoEscalon: numero; ES cantFlores: numero; ES cantPapeles: numero)
+  comenzar
+    repetir tamañoEscalon
+      contarFlores(cantFlores)
+      contarPapeles(cantPapeles)
+      mover
+  fin
+  
+  proceso hacerEscalera(E cantEscalones: numero)
+  variables
+    tamañoEscalon,cantFlores,cantPapeles,cantCondicion: numero
+  comenzar
+    tamañoEscalon := 1
+    cantCondicion := 0
+    repetir cantEscalones
+      cantFlores := 0
+      cantPapeles := 0
+      hacerEscalon(tamañoEscalon,cantFlores,cantPapeles)
+      derecha
+      hacerEscalon(tamañoEscalon,cantFlores,cantPapeles)
+      izquierda
+      contarFlores(cantFlores)
+      contarPapeles(cantPapeles)
+      evaluarCondicion(cantFlores,cantPapeles,cantCondicion)
+      tamañoEscalon := tamañoEscalon + 1
+    Informar(cantCondicion)
+  fin
+
+areas
+  ciudad: AreaC(1,1,100,100)
+robots
+  robot robot1
+  variables
+    cantEscalones: numero
+  comenzar
+    cantEscalones := 4
+    hacerEscalera(cantEscalones)
+  fin
+variables
+  R1: robot1
+  R2: robot1
+  R3: robot1
+comenzar
+  AsignarArea(R1,ciudad)
+  AsignarArea(R2,ciudad)
+  AsignarArea(R3,ciudad)
+  Iniciar(R1,12,14)
+  Iniciar(R2,17,10)
+  Iniciar(R3,22,6)
+fin

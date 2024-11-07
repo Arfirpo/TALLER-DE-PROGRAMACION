@@ -1,0 +1,108 @@
+programa ejercicio1P2
+procesos
+  {--------------------------------}
+  proceso juntarFlores(ES cantFlores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  {--------------------------------}
+  proceso recorrerAvenida(ES cantFlores: numero)    
+  comenzar
+    repetir 9
+      juntarFlores(cantFlores)
+      mover
+    juntarFlores(cantFlores)
+  fin
+  {--------------------------------}
+  proceso calcularMax(E cantFlores2: numero; E numRobot: numero; ES cantMax: numero; ES robotMax: numero)
+  comenzar
+    si(cantFlores2 > cantMax)
+      cantMax := cantFlores2
+      robotMax := numRobot
+  fin
+  {--------------------------------}
+  proceso asignarIdentificacion
+  comenzar
+    EnviarMensaje(1,agus)
+    EnviarMensaje(2,pau)
+    EnviarMensaje(3,cam)
+    EnviarMensaje(4,tom)
+    EnviarMensaje(5,paul)
+    EnviarMensaje(6,joaqui)
+  fin
+{--------------------------------}
+areas
+  area1: AreaP(1,1,1,10)
+  area2: AreaP(2,11,2,20)
+  area3: AreaP(3,21,3,30)
+  area4: AreaP(4,31,4,40)
+  area5: AreaP(5,41,5,50)
+  area6: AreaP(6,51,6,60)
+  area7: AreaP(2,1,2,1)
+robots
+  robot robot1
+  variables
+    cantFlores: numero
+    quienSoy: numero
+  comenzar
+    RecibirMensaje(quienSoy,fiscal)
+    cantFlores := 0
+    recorrerAvenida(cantFlores)
+    EnviarMensaje(quienSoy,fiscal)
+    EnviarMensaje(cantFlores,fiscal)
+  fin
+  robot robot2
+  variables
+    numRobot,cantMax,robotMax,agus,pau,cantFlores2: numero
+  comenzar
+    cantMax := 0
+    asignarIdentificacion
+    repetir 6
+      RecibirMensaje(numRobot,*)
+      si(numRobot = 1)
+        RecibirMensaje(cantFlores2,agus)
+      sino
+        si(numRobot = 2)
+          RecibirMensaje(cantFlores2,pau)
+        sino
+          si(numRobot = 3)
+            RecibirMensaje(cantFlores2,cam)
+          sino
+            si(numRobot = 4)
+              RecibirMensaje(cantFlores2,tom)
+            sino
+              si(numRobot = 5)
+                RecibirMensaje(cantFlores2,paul)
+              sino
+                RecibirMensaje(cantFlores2,joaqui)
+      calcularMax(cantFlores2,numRobot,cantMax,robotMax)
+    Informar(cantMax)
+    Informar(robotMax)
+  fin
+variables
+  agus: robot1
+  pau: robot1
+  cam: robot1
+  tom: robot1
+  paul: robot1
+  joaqui: robot1
+  fiscal: robot2
+comenzar
+  AsignarArea(agus,area1)
+  AsignarArea(pau,area2)
+  AsignarArea(cam,area3)
+  AsignarArea(tom,area4)
+  AsignarArea(paul,area5)
+  AsignarArea(joaqui,area6)
+  AsignarArea(fiscal,area7)
+  Iniciar(agus,1,1)
+  Iniciar(pau,2,11)
+  Iniciar(cam,3,21)
+  Iniciar(tom,4,31)
+  Iniciar(paul,5,41)
+  Iniciar(joaqui,6,51)
+  Iniciar(fiscal,2,1)
+fin
+

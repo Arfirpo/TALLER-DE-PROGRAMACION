@@ -1,0 +1,72 @@
+{Modifique el ejercicio anterior, considerando que ahora habrá un robot fiscalizador, que será responsable de informar la diferencia de flores que obtuvo el ganador con respecto al perdedor. El robot fiscalizador se ubica en la esquina (2,1)}
+programa ejercicio1P2
+procesos
+
+  proceso juntarFlores(ES cantFlores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+
+  proceso recorrerAvenida(ES cantFlores: numero)    
+  comenzar
+    repetir 9
+      juntarFlores(cantFlores)
+      mover
+    juntarFlores(cantFlores)
+  fin 
+
+areas
+  area1: AreaP(1,1,1,10)
+  area2: AreaP(2,11,2,20)
+  area3: AreaP(2,1,2,1)
+robots
+  robot robot1
+  variables
+    cantFlores: numero
+    quienSoy: numero
+  comenzar
+    RecibirMensaje(quienSoy,juez)
+    cantFlores := 0
+    recorrerAvenida(cantFlores)
+    EnviarMensaje(quienSoy,juez)
+    EnviarMensaje(cantFlores,juez)
+  fin
+  robot robot2
+  variables
+    numRobot,agus,pau,cantFlores1,cantFlores2,diferencia: numero
+  comenzar
+    EnviarMensaje(1,agus)
+    EnviarMensaje(2,pau)
+    repetir 2
+      RecibirMensaje(numRobot,*)
+      si(numRobot = 1)
+        RecibirMensaje(cantFlores1,agus)
+        agus := numRobot
+      sino
+        RecibirMensaje(cantFlores2,pau)
+        pau := numRobot
+    si(cantFlores1 > cantFlores2)
+      diferencia := cantFlores1 - cantFlores2
+      Informar(agus)
+      Informar(diferencia)
+    sino
+      si(cantFlores2 > cantFlores1)
+        diferencia := cantFlores2 - cantFlores1
+        Informar(pau)
+        Informar(diferencia)
+  fin
+variables
+  agus: robot1
+  pau: robot1
+  juez: robot2
+comenzar
+  AsignarArea(agus,area1)
+  AsignarArea(pau,area2)
+  AsignarArea(juez,area3)
+  Iniciar(agus,1,1)
+  Iniciar(pau,2,11)
+  Iniciar(juez,2,1)
+fin
+

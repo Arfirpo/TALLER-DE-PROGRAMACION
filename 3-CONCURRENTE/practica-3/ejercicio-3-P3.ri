@@ -1,0 +1,155 @@
+programa ejercicio3P3
+procesos
+  {_____________________}
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+  fin
+  {_____________________}
+  proceso asignarEsquina
+  variables
+    avDest,caDest: numero
+  comenzar
+    Random(avDest,2,10)
+    Random(caDest,2,10)
+    EnviarMensaje(avDest,r1)
+    EnviarMensaje(caDest,r1)
+    EnviarMensaje(avDest,r2)
+    EnviarMensaje(caDest,r2)
+    EnviarMensaje(avDest,r3)
+    EnviarMensaje(caDest,r3)
+    EnviarMensaje(avDest,r4)
+    EnviarMensaje(caDest,r4)
+  fin
+  {_____________________}
+  proceso recibirCantidades(ES id: numero; ES cantFlores: numero)
+  comenzar
+    RecibirMensaje(id,*)
+    si(id = 1)
+      RecibirMensaje(cantFlores,r1)
+    sino
+      si(id = 2)
+        RecibirMensaje(cantFlores,r2)
+      sino
+        si(id = 3)
+          RecibirMensaje(cantFlores,r3)
+        sino
+          RecibirMensaje(cantFlores,r4)
+  fin
+  {_____________________}
+  proceso actualizarMax(E cantFlores: numero; E id: numero; ES cantMax: numero; ES robotMax: numero)
+  comenzar
+    si(cantFlores > cantMax)
+      cantMax := cantFlores
+      robotMax := id
+  fin
+  {_____________________}
+  proceso juntarFlores(E avDest: numero; E caDest: numero; E avIni: numero; E caIni: numero; ES cantFlores: numero)
+  variables
+    ok: boolean
+  comenzar
+    BloquearEsquina(avDest,caDest)
+    Pos(avDest,caDest)
+    si(HayFlorEnLaEsquina)
+      ok := V
+      tomarFlor
+      cantFlores := cantFlores + 1
+    sino
+      ok := F
+    EnviarMensaje(ok,j)
+    Pos(avIni,caIni)
+    LiberarEsquina(avDest,caDest)
+  fin
+  {_____________________}
+  proceso autorizar
+  variables
+    ok: boolean
+  comenzar
+    ok := V
+    EnviarMensaje(ok,r1)
+    EnviarMensaje(ok,r2)    
+    EnviarMensaje(ok,r3)
+    EnviarMensaje(ok,r4)    
+  fin
+  {_____________________}
+  proceso avisarFin
+  variables
+    ok: boolean
+  comenzar
+    ok := F
+    EnviarMensaje(ok,r1)
+    EnviarMensaje(ok,r2)    
+    EnviarMensaje(ok,r3)
+    EnviarMensaje(ok,r4)    
+  fin
+areas
+  cuadrante: AreaPC(2,2,10,10)
+  areaJefe: AreaP(1,1,1,1)
+  areaR1: AreaP(2,1,2,1)
+  areaR2: AreaP(3,1,3,1)
+  areaR3: AreaP(4,1,4,1)
+  areaR4: AreaP(5,1,5,1)
+robots
+  robot jefe
+  variables
+    id,cantFlores,cantMax,robotMax: numero
+    ok: boolean
+  comenzar
+    cantMax := -1
+    asignarID
+    asignarEsquina
+    autorizar
+    repetir 4
+      RecibirMensaje(ok,*)
+    mientras(ok)
+      autorizar
+      repetir 4
+        RecibirMensaje(ok,*)
+    avisarFin
+    repetir 4
+      recibirCantidades(id,cantFlores)
+      actualizarMax(cantFlores,id,cantMax,robotMax)
+    Informar('ganador',robotMax)        
+  fin
+  robot recolector
+  variables
+    id,cantFlores,avIni,caIni,avDest,caDest: numero
+    ok: boolean
+  comenzar
+    avIni := PosAv
+    caIni := PosCa
+    RecibirMensaje(id,j)
+    RecibirMensaje(avDest,j)
+    RecibirMensaje(caDest,j)
+    RecibirMensaje(ok,j)
+    mientras(ok)
+      juntarFlores(avDest,caDest,avIni,caIni,cantFlores)
+      RecibirMensaje(ok,j)
+    EnviarMensaje(id,j)
+    EnviarMensaje(cantFlores,j)
+  fin
+variables
+  j: jefe
+  r1: recolector
+  r2: recolector
+  r3: recolector
+  r4: recolector
+comenzar
+  AsignarArea(j,areaJefe)
+  AsignarArea(r1,areaR1)
+  AsignarArea(r1,cuadrante)
+  AsignarArea(r2,areaR2)
+  AsignarArea(r2,cuadrante)
+  AsignarArea(r3,areaR3)
+  AsignarArea(r3,cuadrante)
+  AsignarArea(r4,areaR4)
+  AsignarArea(r4,cuadrante)
+  Iniciar(j,1,1)
+  Iniciar(r1,2,1)
+  Iniciar(r2,3,1)
+  Iniciar(r3,4,1)
+  Iniciar(r4,5,1)
+fin

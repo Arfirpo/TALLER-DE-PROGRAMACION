@@ -1,0 +1,62 @@
+programa ejercicio1P2
+procesos
+
+  proceso juntarFlores(ES cantFlores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+
+  proceso recorrerAvenida(ES cantFlores: numero)    
+  comenzar
+    repetir 9
+      juntarFlores(cantFlores)
+      mover
+    juntarFlores(cantFlores)
+  fin
+  
+
+areas
+  area1: AreaP(1,1,1,10)
+  area2: AreaP(2,11,2,20)
+robots
+
+  robot robot1
+  variables
+    cantFlores: numero
+    cantFlores2: numero
+    diferencia: numero
+  comenzar
+    cantFlores := 0
+    recorrerAvenida(cantFlores)
+    EnviarMensaje(cantFlores,pau)
+    RecibirMensaje(cantFlores2,pau)
+    si(cantFlores > cantFlores2)
+      diferencia := cantFlores - cantFlores2
+      Informar(diferencia)
+  fin
+
+  robot robot2
+  variables
+    cantFlores: numero
+    cantFlores2: numero
+    diferencia: numero
+  comenzar
+    cantFlores := 0
+    recorrerAvenida(cantFlores)
+    EnviarMensaje(cantFlores,agus)
+    RecibirMensaje(cantFlores2,agus)
+    si(cantFlores > cantFlores2)
+      diferencia := cantFlores - cantFlores2
+      Informar(diferencia)
+  fin
+variables
+  agus: robot1
+  pau: robot2
+comenzar
+  AsignarArea(agus,area1)
+  AsignarArea(pau,area2)
+  Iniciar(agus,1,1)
+  Iniciar(pau,2,11)
+fin

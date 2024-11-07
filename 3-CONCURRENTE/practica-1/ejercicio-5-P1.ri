@@ -1,0 +1,106 @@
+programa ejercicio5P1
+
+procesos
+  {-------------------------------------------}
+  proceso juntarFlores(ES cantFlores: numero)  
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  {-------------------------------------------}
+  proceso dejarFlores(E cantFlores: numero)
+  comenzar
+    repetir cantFlores
+      depositarFlor
+  fin
+  {-------------------------------------------}
+  proceso juntarPapeles(ES cantPapeles: numero)  
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+  fin
+  {-------------------------------------------}
+  proceso dejarPapeles(E cantPapeles: numero)
+  comenzar
+    repetir cantPapeles
+      depositarPapel
+  fin
+  {-------------------------------------------}
+  proceso recorrerFlores
+  variables
+    cantFlores: numero
+  comenzar
+    cantFlores := 0
+    repetir 19
+      juntarFlores(cantFlores)
+      mover
+    juntarFlores(cantFlores)
+    si(cantFlores > 0)
+      dejarFlores(cantFlores)
+  fin
+  {-------------------------------------------}
+  proceso recorrerPapeles
+  variables
+    cantPapeles: numero
+  comenzar
+    cantPapeles := 0
+    repetir 19
+      juntarPapeles(cantPapeles)
+      mover
+    juntarPapeles(cantPapeles)
+    si(cantPapeles > 0)
+      dejarPapeles(cantPapeles)
+  fin
+  {-------------------------------------------}
+
+areas
+  area1A: AreaP(1,75,20,75)
+  area1B: AreaP(1,80,20,80)
+  area2A: AreaP(75,80,75,99)
+  area2B: AreaP(80,80,80,99)
+  area3A: AreaP(80,10,99,10)
+  area3B: AreaP(80,15,99,15)
+  area4A: AreaP(15,1,15,20)
+  area4B: AreaP(10,1,10,20)
+robots
+  robot robot1
+  variables
+    av: numero
+    ca: numero
+  comenzar
+    av := PosAv
+    derecha
+    recorrerFlores
+    Pos(av,PosCa + 5)
+    recorrerFlores
+  fin
+  robot robot2
+  variables
+    ca: numero
+  comenzar
+    ca := PosCa
+    recorrerPapeles
+    Pos(PosAv + 5,ca)
+    recorrerPapeles
+  fin
+variables
+  R1: robot1
+  R2: robot2
+  R3: robot1
+  R4: robot2
+comenzar
+  AsignarArea(R1,area1A)
+  AsignarArea(R1,area1B)
+  AsignarArea(R2,area2A)
+  AsignarArea(R2,area2B)
+  AsignarArea(R3,area3A)
+  AsignarArea(R3,area3B)
+  AsignarArea(R4,area4A)
+  AsignarArea(R4,area4B)
+  Iniciar(R1,1,75)
+  Iniciar(R2,75,80)
+  Iniciar(R3,80,10)
+  Iniciar(R4,10,1)
+fin

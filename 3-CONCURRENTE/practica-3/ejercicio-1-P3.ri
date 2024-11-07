@@ -1,0 +1,121 @@
+programa ejercicio1P3
+procesos
+  {-------------------------------------------}
+  proceso juntarFlores(ES cantFlores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  {-------------------------------------------}
+  proceso juntarPapeles(ES cantPapeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+  fin
+  {-------------------------------------------}
+  proceso dejarFlores(E cantFlores:numero; E avIni: numero; E caIni: numero)
+  comenzar
+    repetir cantFlores
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      depositarFlor
+      Pos(avIni,caIni)
+      LiberarEsquina(10,10)
+  fin
+  {-------------------------------------------}
+  proceso dejarPapeles(E cantPapeles:numero; E avIni: numero; E caIni: numero)
+  comenzar
+    repetir cantPapeles
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      depositarPapel
+      Pos(avIni,caIni)
+      LiberarEsquina(10,10)
+  fin
+  {-------------------------------------------}
+  proceso intentosFlores(ES cantFlores: numero; E avIni: numero; E caIni: numero)
+  variables
+    avDest,caDest: numero
+  comenzar
+    repetir 5
+      Random(avDest,1,5)
+      Random(caDest,1,10)
+      BloquearEsquina(avDest,caDest)
+      Pos(avDest,caDest)
+      si(HayFlorEnLaEsquina)
+        juntarFlores(cantFlores)
+      Pos(avIni,caIni)
+      LiberarEsquina(avDest,caDest)
+  fin
+  {-------------------------------------------}
+  proceso intentosPapeles(ES cantPapeles: numero; E avIni: numero; E caIni: numero)
+  variables
+    avDest,caDest: numero
+  comenzar
+    repetir 3
+      Random(avDest,6,10)
+      Random(caDest,1,9)
+      BloquearEsquina(avDest,caDest)
+      Pos(avDest,caDest)
+      si(HayPapelEnLaEsquina)
+        juntarPapeles(cantPapeles)
+      Pos(avIni,caIni)
+      LiberarEsquina(avDest,caDest)
+  fin
+  {-------------------------------------------}
+areas
+  areaFloreros: AreaPC(1,1,5,10)
+  areaPapeleros: AreaPC(6,1,10,9)
+  areaF1: AreaP(6,10,6,10)
+  areaF2: AreaP(7,10,7,10)
+  areaP1: AreaP(8,10,8,10)
+  areaP2: AreaP(9,10,9,10)
+  areaComun: AreaC(10,10,10,10)
+robots
+  robot floreros
+  variables
+    avIni,caIni,cantFlores: numero
+  comenzar
+    cantFlores := 0
+    avIni := PosAv
+    caIni := PosCa
+    intentosFlores(cantFlores,avIni,caIni)
+    si(cantFlores > 0)
+      dejarFlores(cantFlores,avIni,caIni)
+  fin
+  robot papeleros
+  variables
+    avIni,caIni,avDest,caDest,cantPapeles: numero
+  comenzar
+    cantPapeles := 0
+    avIni := PosAv
+    caIni := PosCa
+    intentosPapeles(cantPapeles,avIni,caIni)
+    si(cantPapeles > 0)
+      dejarPapeles(cantPapeles,avIni,caIni)
+  fin
+variables
+  florero1: floreros
+  florero2: floreros
+  papelero1: papeleros
+  papelero2: papeleros
+comenzar
+  AsignarArea(florero1,areaFloreros)
+  AsignarArea(florero1,areaComun)
+  AsignarArea(florero1,areaF1)
+  AsignarArea(florero2,areaFloreros)
+  AsignarArea(florero2,areaComun)
+  AsignarArea(florero2,areaF2)
+  AsignarArea(papelero1,areaPapeleros)
+  AsignarArea(papelero1,areaComun)
+  AsignarArea(papelero1,areaP1)
+  AsignarArea(papelero2,areaPapeleros)
+  AsignarArea(papelero2,areaComun)
+  AsignarArea(papelero2,areaP2)
+  Iniciar(florero1,6,10)
+  Iniciar(florero2,7,10)
+  Iniciar(papelero1,8,10)
+  Iniciar(papelero2,9,10)
+fin
