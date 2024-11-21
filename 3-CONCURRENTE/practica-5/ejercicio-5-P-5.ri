@@ -1,0 +1,110 @@
+programa ejercicio5P5
+procesos
+  {________________________________}
+  proceso depositarPapeles(ES cantPapeles: numero; E av: numero; E ca: numero)
+  comenzar
+    BloquearEsquina(100,1)
+    Pos(100,1)
+    repetir cantPapeles
+      depositarPapel
+    Pos(av,ca)
+    LiberarEsquina(100,1)
+  fin
+  {________________________________}
+  proceso atenderSolicitud(E ID: numero; ES contador: numero)
+  variables
+    cantPapeles,avIni,caIni: numero
+    solicitud: boolean
+  comenzar
+    avIni:= PosAv
+    caIni := PosCa
+    Random(cantPapeles,1,5)
+    si(ID = 10)
+      RecibirMensaje(solicitud,cliente1)
+      si(solicitud)
+        depositarPapeles(cantPapeles,avIni,caIni)
+        EnviarMensaje(cantPapeles,cliente1)
+      sino
+        contador := contador + 1
+    sino
+      si(ID = 11)
+        RecibirMensaje(solicitud,cliente2)
+        si(solicitud)
+          depositarPapeles(cantPapeles,avIni,caIni)
+          EnviarMensaje(cantPapeles,cliente2)
+        sino
+          contador := contador + 1
+      sino
+        RecibirMensaje(solicitud,cliente3)
+        si(solicitud)
+          depositarPapeles(cantPapeles,avIni,caIni)
+          EnviarMensaje(cantPapeles,cliente3)
+        sino
+          contador := contador + 1
+  fin
+  {________________________________}
+  proceso recogerPapeles(E cantPapeles: numero; E av: numero; E ca: numero)
+  comenzar
+    repetir cantPapeles
+      BloquearEsquina(100,1)
+      Pos(100,1)
+      tomarPapel
+      Pos(av,ca)
+      LiberarEsquina(100,1)
+  fin
+  {________________________________}
+areas
+  pozo: AreaC(100,1,100,1)
+  areaServidor: AreaP(13,1,13,1)
+  areaCliente1: AreaP(10,1,10,1)
+  areaCliente2: AreaP(11,1,11,1)
+  areaCliente3: AreaP(12,1,12,1)
+robots
+  {________________________________}
+  robot server
+  variables
+    contador,ID: numero
+  comenzar
+    contador := 0
+    mientras(contador <> 3)
+      RecibirMensaje(ID,*)
+      atenderSolicitud(ID,contador)
+  fin
+  {________________________________}
+  robot client
+  variables
+    ID,cantPapeles,avIni,caIni: numero
+    solicitud,termine: boolean
+  comenzar
+    ID := PosAv
+    avIni := PosAv
+    caIni := PosCa
+    solicitud := V
+    repetir 4
+      EnviarMensaje(ID,servidor)
+      EnviarMensaje(solicitud,servidor)
+      RecibirMensaje(cantPapeles,servidor)
+      recogerPapeles(cantPapeles,avIni,caIni)
+    EnviarMensaje(ID,servidor)
+    EnviarMensaje(F,servidor)
+  fin
+  {________________________________}
+variables
+  servidor: server
+  cliente1: client
+  cliente2: client
+  cliente3: client
+comenzar
+  AsignarArea(servidor,areaServidor)
+  AsignarArea(servidor,pozo)
+  AsignarArea(cliente1,areaCliente1)
+  AsignarArea(cliente1,pozo)
+  AsignarArea(cliente2,areaCliente2)
+  AsignarArea(cliente2,pozo)
+  AsignarArea(cliente3,areaCliente3)
+  AsignarArea(cliente3,pozo)
+  Iniciar(servidor,13,1)
+  Iniciar(cliente1,10,1)
+  Iniciar(cliente2,11,1)
+  Iniciar(cliente3,12,1)
+fin

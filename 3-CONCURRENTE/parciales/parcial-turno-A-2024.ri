@@ -1,0 +1,118 @@
+programa parcialTurnoA
+procesos
+  {_____________________________}
+  proceso asignarEscalones
+  variables
+    cantEsc: numero
+  comenzar
+    Random(cantEsc,1,5)
+    EnviarMensaje(cantEsc,f1)
+    Random(cantEsc,1,5)
+    EnviarMensaje(cantEsc,f2)
+    Random(cantEsc,1,5)
+    EnviarMensaje(cantEsc,f3)
+  fin
+  {_____________________________}
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  {_____________________________}
+  proceso recogerFlores(ES cantFlores: numero;)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  {_____________________________}
+  proceso lado(ES cantFlores: numero)
+  comenzar
+    repetir 2
+      recogerFlores(cantFlores)
+      mover
+  fin
+  {_____________________________}
+  proceso escalon(ES cantFlores: numero)
+  comenzar
+    lado(cantFlores)
+    derecha
+    lado(cantFlores) 
+    izquierda
+  fin
+  {_____________________________}
+  proceso depositarFlores(E cantFlores: numero)
+  variables
+    avIni,caIni: numero
+  comenzar
+    avIni := PosAv
+    caIni := PosCa
+    repetir cantFlores
+      BloquearEsquina(99,99)
+      Pos(99,99)
+      depositarFlor
+      Pos(avIni,caIni)
+      LiberarEsquina(99,99)
+  fin
+  {_____________________________}
+  proceso escalera(E cantEsc: numero; ES cantCondicion: numero)
+  variables
+    cantFlores: numero
+  comenzar
+    repetir cantEsc
+      cantFlores := 0
+      escalon(cantFlores)
+      si(cantFlores = 0)
+        cantCondicion := cantCondicion + 1
+      sino
+        depositarFlores(cantFlores)
+  fin
+  {_____________________________}
+areas
+  pozo: AreaPC(99,99,99,99)
+  areaF1: AreaP(2,1,12,11)
+  areaF2: AreaP(20,1,30,11) 
+  areaF3: AreaP(40,1,50,11)
+  areaFiscal: AreaP(1,1,1,1)
+robots
+  {_____________________________}
+  robot robot1
+  variables
+    cantCondicion,tot: numero
+  comenzar
+    tot := 0
+    asignarEscalones
+    repetir 3
+      RecibirMensaje(cantCondicion,*)
+      tot := tot + cantCondicion
+    Informar('Total',tot)
+    
+  fin
+  {_____________________________}
+  robot robot2
+  variables
+    cantEsc,cantCondicion: numero
+  comenzar
+    cantCondicion := 0
+    RecibirMensaje(cantEsc,fiscal)
+    escalera(cantEsc,cantCondicion)
+    EnviarMensaje(cantCondicion,fiscal)
+  fin
+variables
+  fiscal: robot1
+  f1: robot2
+  f2: robot2
+  f3: robot2
+comenzar
+  AsignarArea(f1,areaF1)
+  AsignarArea(f1,pozo)
+  AsignarArea(f2,areaF2)
+  AsignarArea(f2,pozo)
+  AsignarArea(f3,areaF3)
+  AsignarArea(f3,pozo)
+  AsignarArea(fiscal,areaFiscal)
+  Iniciar(fiscal,1,1)
+  Iniciar(f1,2,1)
+  Iniciar(f2,20,1)
+  Iniciar(f3,40,1)
+fin

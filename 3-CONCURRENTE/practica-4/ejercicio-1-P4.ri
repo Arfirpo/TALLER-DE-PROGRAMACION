@@ -1,0 +1,124 @@
+programa ejercicio4
+procesos
+  {____________________________}
+  proceso juntarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  {____________________________}
+  proceso avanzar
+  comenzar
+    mientras((HayFlorEnLaBolsa) & (PosCa < 100))
+      depositarFlor
+      si(PosCa < 100)
+        mover
+  fin
+  {____________________________}
+areas
+  p1: AreaP(1,1,1,1)
+  c1: AreaPC(1,2,1,100)
+  p2: AreaP(2,1,2,1)
+  c2: AreaPC(2,2,2,100)
+  p3: AreaP(3,1,3,1)
+  c3: AreaPC(3,2,3,100)
+  p4: AreaP(100,100,100,100)  
+robots
+  {____________________________}
+  robot servidor
+  variables
+    ID,cantF,av,ca: numero
+    finC1,finC2,finC3,ACK: boolean
+  comenzar
+    finC1 := F
+    finC2 := F
+    finC3 := F
+    mientras ~(finC1) | ~(finC2) | ~(finC3)
+      RecibirMensaje(ID,*)
+      ACK := V
+      si(ID = 1)
+        RecibirMensaje(cantF,r2)
+        si(cantF <> 0)
+          RecibirMensaje(av,r2)
+          RecibirMensaje(ca,r2)
+          Pos(av,ca)
+          repetir cantF
+            depositarFlor
+          Pos(100,100)
+          EnviarMensaje(ACK,r2)
+        sino
+          finC1 := V  
+      sino
+        si(ID = 2)
+          RecibirMensaje(cantF,r3)
+          si(cantF <> 0)
+            RecibirMensaje(av,r3)
+            RecibirMensaje(ca,r3)
+            Pos(av,ca)
+            repetir cantF
+              depositarFlor
+            Pos(100,100)
+            EnviarMensaje(ACK,r3)
+          sino
+            finC2 := V
+        sino
+          RecibirMensaje(cantF,r4)
+          si(cantF <> 0)
+            RecibirMensaje(av,r4)
+            RecibirMensaje(ca,r4)
+            Pos(av,ca)
+            repetir cantF
+              depositarFlor
+            Pos(100,100)
+            EnviarMensaje(ACK,r4)
+          sino
+            finC3 := V
+  fin
+  {____________________________}
+  robot cliente
+  variables
+    ID,cantF,avAct,caIni,caSig: numero
+    ACK: boolean
+  comenzar
+    ID := PosAv
+    mientras(PosCa < 100)
+      Random(cantF,1,4)
+      avAct := PosAv
+      EnviarMensaje(ID,r1)
+      EnviarMensaje(cantF,r1)
+      caSig := PosCa + 1
+      EnviarMensaje(avAct,r1)
+      EnviarMensaje(caSig,r1)
+      RecibirMensaje(ACK,r1)
+      si(ACK)
+        Pos(avAct,caSig)
+        mientras(HayFlorEnLaEsquina)
+          tomarFlor
+        Pos(avAct,caSig - 1)
+        avanzar
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+    EnviarMensaje(ID,r1)
+    EnviarMensaje(0,r1) 
+  fin
+variables
+  r1: servidor
+  r2: cliente
+  r3: cliente
+  r4: cliente
+comenzar
+  AsignarArea(r1,p4)
+  AsignarArea(r1,c1)
+  AsignarArea(r1,c2)
+  AsignarArea(r1,c3)
+  AsignarArea(r2,p1)
+  AsignarArea(r2,c1)
+  AsignarArea(r3,p2)
+  AsignarArea(r3,c2)
+  AsignarArea(r4,p3)
+  AsignarArea(r4,c3)
+  Iniciar(r1,100,100)
+  Iniciar(r2,1,1)
+  Iniciar(r3,2,1)
+  Iniciar(r4,3,1)
+fin

@@ -1,0 +1,98 @@
+programa ejercicio3P4
+procesos
+  {_________________________________}
+  proceso enviarIdentificacion
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)    
+    EnviarMensaje(3,r3)
+  fin
+  {_________________________________}
+  proceso confirmacion(E ID: numero)
+  variables
+    ok: boolean
+  comenzar
+    ok := V
+    si(ID = 1)
+      EnviarMensaje(ok,r2)
+      EnviarMensaje(ok,r3)
+    sino
+      si(ID = 2)
+        EnviarMensaje(ok,r1)
+        EnviarMensaje(ok,r3)
+      sino
+        EnviarMensaje(ok,r1)
+        EnviarMensaje(ok,r2)
+    repetir 2
+      RecibirMensaje(ok,*)
+  fin
+  {_________________________________}
+  proceso juntarPapeles(ES cantPapeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+      si(cantPapeles = 5)
+        enviarConfirmacion(ID)
+        repetir 2
+          RecibirMensaje(ok,*)
+        cantPapeles := 0
+  fin
+  {_________________________________}
+  proceso recorrerAvenida(E ID: numero)
+  variables
+    ok,etapa: boolean
+    N,cantPapeles: numero
+  comenzar
+    mientras(PosCa < 100)
+      Random(N,1,5)
+      cantPapeles := 0
+      etapa := F
+      mientras ~(etapa) & (PosCa < 100)
+        si(HayPapelEnLaEsquina) & (cantPapeles <> N)
+          tomarPapel
+          cantPapeles := cantPapeles + 1
+        sino
+          si(HayPapelEnLaEsquina) & (cantPapeles = N)
+            confirmacion(ID)
+            etapa := V
+          sino
+            mover          
+  fin
+  {_________________________________}
+areas
+  areaR1: AreaP(1,1,1,100)
+  areaR2: AreaP(2,1,2,100)
+  areaR3: AreaP(3,1,3,100)
+  areaR4: AreaP(4,1,4,1)
+robots
+  {_________________________________}
+  robot robot1
+  variables
+    ID: numero
+  comenzar
+    RecibirMensaje(ID,r4)
+    recorrerAvenida(ID)
+  fin
+  {_________________________________}
+  robot robot2
+  variables
+    ID: numero
+  comenzar
+    enviarIdentificacion
+  fin
+variables
+  r1: robot1
+  r2: robot1
+  r3: robot1
+  r4: robot2
+comenzar
+  AsignarArea(r1,areaR1)
+  AsignarArea(r2,areaR2)
+  AsignarArea(r3,areaR3)
+  AsignarArea(r4,areaR4)
+  Iniciar(r1, 1,1)
+  Iniciar(r2, 2,1)
+  Iniciar(r3, 3,1)
+  Iniciar(r4, 4,1)
+fin

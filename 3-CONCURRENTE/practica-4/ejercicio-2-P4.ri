@@ -1,0 +1,93 @@
+programa ejercicio2P4
+procesos
+  {___________________________________}
+  proceso juntarPapeles(ES cantPapeles: numero)
+  variables
+    avIni,caIni: numero
+  comenzar 
+    avIni := PosAv
+    caIni := PosCa
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+      si(cantPapeles = 5)
+        BloquearEsquina(50,50)
+        Pos(50,50)
+        repetir cantPapeles
+          depositarPapel
+        Pos(avIni,caIni)
+        LiberarEsquina(50,50)
+        cantPapeles := 0
+  fin
+  {___________________________________}
+  proceso recorrerAvenida
+  variables
+    cantPapeles: numero
+  comenzar
+    cantPapeles := 0
+    repetir 99
+      juntarPapeles(cantPapeles)
+      mover
+    juntarPapeles(cantPapeles)
+  fin
+  {___________________________________}
+areas
+  pozo: AreaC (50,50,50,50)
+  av5: AreaP(5,1,5,100)
+  av10: AreaP(10,1,10,100)
+  c1: AreaP(11,1,11,1)
+  c2: AreaP(12,1,12,1)
+robots
+  robot productor
+  comenzar
+    recorrerAvenida
+  fin
+  {___________________________________}
+  robot consumidor
+  variables
+    intentos,cantJ,cantR,avIni,caIni: numero
+  comenzar
+    avIni := PosAv
+    caIni := PosCa
+    intentos := 0
+    mientras(intentos < 8)
+      Random(cantR,2,5)
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      cantJ := 0
+      mientras((HayPapelEnLaEsquina)&(cantJ < cantR))
+        tomarPapel
+        cantJ := cantJ + 1
+      si(cantJ = cantR)
+        Pos(avIni,caIni)
+        LiberarEsquina(50,50)
+        repetir cantJ
+          depositarPapel
+        intentos := 0
+      sino
+        repetir cantJ
+          depositarPapel
+        Pos(avIni,caIni)
+        LiberarEsquina(50,50)
+        intentos := intentos + 1
+  fin
+  {___________________________________}
+variables
+  r1: productor
+  r2: productor
+  r3: consumidor
+  r4: consumidor
+comenzar
+  AsignarArea(r1,av5)
+  AsignarArea(r1,pozo)
+  AsignarArea(r2,av10)
+  AsignarArea(r2,pozo)
+  AsignarArea(r3,c1)
+  AsignarArea(r3,pozo)
+  AsignarArea(r4,c2)
+  AsignarArea(r4,pozo)
+  Iniciar(r1,5,1)
+  Iniciar(r2,10,1)
+  Iniciar(r3,11,1)
+  Iniciar(r4,12,1)
+fin

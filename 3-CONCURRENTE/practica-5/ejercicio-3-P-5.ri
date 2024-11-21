@@ -1,0 +1,115 @@
+programa ejercicio3P4
+procesos
+  {_______________________}
+  proceso vaciarBolsa
+  variables
+    avIni,caIni: numero
+    ok: boolean
+  comenzar
+    ok:= V
+    avIni := PosAv
+    caIni := PosCa
+    mientras(HayFlorEnLaBolsa)
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      depositarFlor
+      Pos(avIni,caIni)
+      LiberarEsquina(10,10)
+    EnviarMensaje(ok,cos)
+  fin
+  {_______________________}
+  proceso recogerFlores(ES cantFlores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      si(cantFlores <> 10)
+        tomarFlor
+        cantFlores := cantFlores + 1
+      sino
+        vaciarBolsa
+        cantFlores := 0
+  fin
+  {_______________________}
+  proceso recogerFloresC
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  {_______________________}
+  proceso realizarTarea(ES esq: numero; ES cantFlores: numero)
+  comenzar
+    si(esq <> 15)
+      recogerFlores(cantFlores)
+      esq := esq + 1
+    sino
+      vaciarBolsa
+      recogerFlores(cantFlores)
+      esq := 0
+  fin
+  {_______________________}
+  proceso recorrerAvenida
+  variables
+    esq,cantFlores: numero
+    termine: boolean
+  comenzar
+    termine := F
+    cantFlores := 0
+    repetir 99
+      realizarTarea(esq,cantFlores)
+      mover
+    realizarTarea(esq,cantFlores)
+    EnviarMensaje(termine,cos)
+  fin
+  {_______________________}
+areas
+  areaCos: AreaP(1,5,1,5)
+  deposito: AreaC(10,10,10,10)
+  areaRec1: AreaP(1,3,100,3)
+  areaRec2: AreaP(1,4,100,4)
+robots
+  {_______________________}
+  robot robot1
+  variables
+    ok: boolean
+    avIni,caIni,contador,cantFlores: numero
+  comenzar
+    contador := 0
+    cantFlores := 0
+    ok := V
+    avIni := PosAv
+    caIni := PosCa
+    mientras(contador <> 2)
+      RecibirMensaje(ok,*)
+      si(ok)
+        BloquearEsquina(10,10)
+        Pos(10,10)
+        mientras(HayFlorEnLaEsquina)
+          tomarFlor
+          cantFlores := cantFlores + 1
+        Pos(avIni,caIni)
+        LiberarEsquina(10,10)
+      sino
+        contador := contador + 1   
+    Informar('Flores',cantFlores)
+  fin
+  {_______________________}
+  robot robot2
+  comenzar
+    derecha
+    recorrerAvenida
+  fin
+  {_______________________}
+variables
+  cos: robot1
+  rec1: robot2
+  rec2: robot2
+comenzar
+  AsignarArea(cos,areaCos)
+  AsignarArea(cos,deposito)
+  AsignarArea(rec1,areaRec1)
+  AsignarArea(rec1,deposito)
+  AsignarArea(rec2,areaRec2)
+  AsignarArea(rec2,deposito)
+  Iniciar(rec1,1,3)
+  Iniciar(rec2,1,4)
+  Iniciar(cos,1,5)
+fin

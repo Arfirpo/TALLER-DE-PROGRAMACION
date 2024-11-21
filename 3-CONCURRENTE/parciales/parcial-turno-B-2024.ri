@@ -1,0 +1,142 @@
+programa parcialTurnoB
+procesos
+  {_________________________________________}
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1,f1)
+    EnviarMensaje(2,f2)
+    EnviarMensaje(3,f3)
+  fin
+  {_________________________________________}
+  proceso asignarIntentos
+  variables
+    N: numero
+  comenzar
+    Random(N,3,6)
+    EnviarMensaje(N,f1)
+    Random(N,3,6)
+    EnviarMensaje(N,f2)
+    Random(N,3,6)
+    EnviarMensaje(N,f3)
+  fin
+  {_________________________________________}
+  proceso recogerFlores(ES cantFlores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  {_________________________________________}
+  proceso vaciarEsquina(E avIni: numero; E avDest: numero; E caIni: numero; E caDest: numero; ES cantFlores: numero)
+  comenzar
+    BloquearEsquina(avDest,caDest)
+    Pos(avDest,caDest)
+    recogerFlores(cantFlores)
+    Pos(avIni,caIni)
+    LiberarEsquina(avDest,caDest)
+  fin
+  {_________________________________________}
+  proceso depositarFlores(E avIni: numero; E caIni: numero; E cantFlores: numero)
+  comenzar
+    repetir cantFlores
+      BloquearEsquina(5,5)
+      Pos(5,5)
+      depositarFlor
+      Pos(avIni,caIni)
+      LiberarEsquina(5,5)
+  fin
+  {_________________________________________}
+  proceso realizarIntentos(E intentos: numero; ES totFlores: numero)
+  variables
+    avIni,avDest,caIni,caDest,cantFlores: numero
+  comenzar
+    avIni := PosAv
+    caIni := PosCa
+    repetir intentos
+      cantFlores := 0
+      Random(avDest,10,30)
+      Random(caDest,10,30)
+      vaciarEsquina(avIni,avDest,caIni,caDest,cantFlores)
+      totFlores := totFlores + cantFlores
+      si(cantFlores <> 0)
+        depositarFlores(avIni,caIni,cantFlores)
+  fin
+  {_________________________________________}
+  proceso actualizarMaximo(E ID: numero; ES robotMax: numero; ES max: numero)
+  variables
+    cantFlores: numero
+  comenzar
+    si(ID = 1)
+      RecibirMensaje(cantFlores,f1)
+    sino
+      si(ID = 2)
+        RecibirMensaje(cantFlores,f2)
+      sino
+        RecibirMensaje(cantFlores,f3)
+    si(cantFlores > max)
+      max := cantFlores
+      robotMax := ID    
+  fin
+  {_________________________________________}
+areas
+  cuadrante: AreaPC(10,10,30,30)
+  pozo: AreaC(5,5,5,5)
+  areaFiscal: AreaP(9,9,9,9)
+  areaF1: AreaP(1,1,1,1)
+  areaF2: AreaP(2,1,2,1)
+  areaF3: AreaP(3,1,3,1)
+robots
+  {_________________________________________}
+  robot robot1
+  variables  
+    ok: boolean
+    robotMax,max,ID: numero
+  comenzar
+    ok := V
+    max := -1
+    asignarID
+    asignarIntentos
+    repetir 3
+      RecibirMensaje(ID,*)
+      actualizarMaximo(ID,robotMax,max)
+    Pos(5,5)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+    Informar('Ganador',robotMax)
+      
+  fin
+  {_________________________________________}
+  robot robot2
+  variables
+    intentos,totFlores,ID: numero
+  comenzar
+    totFlores := 0
+    RecibirMensaje(ID,fiscal)
+    RecibirMensaje(intentos,fiscal)
+    realizarIntentos(intentos,totFlores)
+    EnviarMensaje(ID,fiscal)
+    EnviarMensaje(totFlores,fiscal)
+  fin
+  {_________________________________________}
+variables
+  fiscal: robot1
+  f1: robot2
+  f2: robot2
+  f3: robot2
+comenzar
+  AsignarArea(fiscal,areaFiscal)
+  AsignarArea(fiscal,pozo)
+  AsignarArea(f1,areaF1)
+  AsignarArea(f1,pozo)
+  AsignarArea(f1,cuadrante)
+  AsignarArea(f2,areaF2)
+  AsignarArea(f2,pozo)
+  AsignarArea(f2,cuadrante)
+  AsignarArea(f3,areaF3)
+  AsignarArea(f3,pozo)
+  AsignarArea(f3,cuadrante)
+  Iniciar(fiscal,9,9)
+  Iniciar(f1,1,1)
+  Iniciar(f2,2,1)
+  Iniciar(f3,3,1)
+fin

@@ -1,0 +1,119 @@
+programa ejercicio2P5
+procesos
+  {______________________________}
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1,rec1)
+    EnviarMensaje(2,rec2)
+    EnviarMensaje(3,rec3)
+  fin
+  {______________________________}
+  proceso depositarFlores(E cantFlores: numero)
+  variables
+    avIni,caIni: numero
+  comenzar
+    avIni := PosAv
+    caIni := PosCa
+    repetir cantFlores
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      depositarFlor
+      Pos(avIni,caIni)
+      LiberarEsquina(50,50)
+  fin
+  {______________________________}
+  proceso confirmacion(E ID: numero)
+  variables
+    ok: boolean
+  comenzar
+    ok := V
+    si(ID = 1)
+      EnviarMensaje(ok,rec2)
+      EnviarMensaje(ok,rec3)
+    sino
+      si(ID = 2)
+        EnviarMensaje(ok,rec1)
+        EnviarMensaje(ok,rec3)
+      sino
+        EnviarMensaje(ok,rec1)
+        EnviarMensaje(ok,rec2)
+    repetir 2
+      RecibirMensaje(ok,*)
+  fin
+  {______________________________}
+  proceso recogerFlores(ES cantFlores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  {______________________________}
+  proceso etapa(E ID: numero)
+  variables
+    cantFlores: numero
+  comenzar
+    cantFlores := 0
+    repetir 9
+      recogerFlores(cantFlores)
+      mover
+    recogerFlores(cantFlores)
+    depositarFlores(cantFlores)
+    confirmacion(ID)
+  fin
+  {______________________________}
+areas
+  pozo: AreaC(50,50,50,50)
+  areaRec1: AreaP (1,1,100,1)
+  areaRec2: AreaP (1,2,100,2)
+  areaRec3: AreaP (1,3,100,3)
+  areaJefe: AreaP (1,4,1,4)
+robots
+  {______________________________}
+  robot robot1
+  variables
+    cantFlores: numero
+    termine: boolean  
+  comenzar
+    cantFlores := 0
+    asignarID
+    repetir 3
+      RecibirMensaje(termine,*)
+    Pos(50,50)
+    recogerFlores(cantFlores)
+    Informar('Total',cantFlores)
+  fin
+  {______________________________}
+  robot robot2
+  variables
+    ID: numero
+    termine: boolean
+  comenzar
+    termine := V
+    RecibirMensaje(ID,jefe)
+    derecha
+    repetir 9
+      etapa(ID)
+      mover
+    etapa(ID)
+    EnviarMensaje(termine,jefe)
+  fin  
+  {______________________________}
+variables
+  jefe: robot1
+  rec1: robot2
+  rec2: robot2
+  rec3: robot2
+comenzar
+  AsignarArea(jefe,areaJefe)
+  AsignarArea(jefe,pozo)
+  AsignarArea(rec1,areaRec1)
+  AsignarArea(rec1,pozo)
+  AsignarArea(rec2,areaRec2)
+  AsignarArea(rec2,pozo)
+  AsignarArea(rec3,areaRec3)
+  AsignarArea(rec3,pozo)
+  Iniciar(rec1, 1,1)
+  Iniciar(rec2, 1,2)
+  Iniciar(rec3, 1,3)
+  Iniciar(jefe, 1,4)
+fin

@@ -1,0 +1,127 @@
+programa ejercicio4P5
+procesos
+  {_________________________}
+  proceso depositarFlores(E cantFlores: numero; E av: numero; E ca: numero)
+  comenzar
+    repetir cantFlores
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      depositarFlor
+      Pos(av,ca)
+      LiberarEsquina(10,10)
+  fin
+  {_________________________}
+  proceso recogerFlores(ES cantFlores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  {_________________________}
+  proceso avisarFinal
+  comenzar
+    EnviarMensaje(F,j1)
+    EnviarMensaje(F,j2)
+    EnviarMensaje(F,j3)
+  fin
+  {_________________________}
+  proceso calcularTotal(ES cantFlores: numero)
+  variables
+    flores: numero
+  comenzar
+    repetir 3
+      RecibirMensaje(flores,*)
+      cantFlores := cantFlores + flores
+  fin
+  {_________________________}
+  proceso asignarIntento(E ID: numero; E av: numero; E ca: numero)
+  variables
+    ok: boolean
+  comenzar
+    ok := V
+    si(ID = 1)
+      EnviarMensaje(ok,j1)
+      EnviarMensaje(av,j1)
+      EnviarMensaje(ca,j1)
+    sino
+      si(ID = 2)
+        EnviarMensaje(ok,j2)
+        EnviarMensaje(av,j2)
+        EnviarMensaje(ca,j2)
+      sino
+        EnviarMensaje(ok,j3)
+        EnviarMensaje(av,j3)
+        EnviarMensaje(ca,j3)
+  fin
+  {_________________________}
+areas
+  cuadrante: AreaPC(40,40,60,60)
+  areaJ1: AreaP(1,1,1,1)
+  areaJ2: AreaP(2,1,2,1)
+  areaJ3: AreaP(3,1,3,1)
+  areajefe: AreaP(4,1,4,1)
+  pozo: AreaPC(10,10,10,10)
+robots
+  {_________________________}
+  robot robot1
+  variables
+    ID,av,ca,cantFlores: numero
+    termino: boolean
+  comenzar
+    termino := V
+    cantFlores := 0
+    repetir 8
+      Random(ID,1,3)
+      Random(av,40,60)
+      Random(ca,40,60)
+      asignarIntento(ID,av,ca)
+      RecibirMensaje(termino,*)
+    avisarFinal
+    calcularTotal(cantFlores)
+    Informar('Total',cantFlores)
+  fin
+  {_________________________}
+  robot robot2
+  variables
+    av,ca,avIni,caIni,cantFlores: numero
+    ok,termine: boolean
+  comenzar
+    ok := V
+    termine := V
+    avIni := PosAv
+    caIni := PosCa
+    cantFlores := 0
+    RecibirMensaje(ok,jefe)
+    mientras(ok)
+      RecibirMensaje(av,jefe)
+      RecibirMensaje(ca,jefe)
+      Pos(av,ca)
+      recogerFlores(cantFlores)
+      Pos(avIni,caIni)
+      EnviarMensaje(termine,jefe)
+      RecibirMensaje(ok,jefe)
+    depositarFlores(cantFlores,avIni,caIni)  
+    EnviarMensaje(cantFlores,jefe)
+  fin
+  {_________________________}
+variables
+  jefe: robot1
+  j1: robot2
+  j2: robot2
+  j3: robot2
+comenzar
+  AsignarArea(j1,areaJ1)
+  AsignarArea(j1,cuadrante)
+  AsignarArea(j1,pozo)
+  AsignarArea(j2,areaJ2)
+  AsignarArea(j2,cuadrante)
+  AsignarArea(j2,pozo)
+  AsignarArea(j3,areaJ3)
+  AsignarArea(j3,cuadrante)
+  AsignarArea(j3,pozo)
+  AsignarArea(jefe,areajefe)
+  Iniciar(j1,1,1)
+  Iniciar(j2,2,1)
+  Iniciar(j3,3,1)
+  Iniciar(jefe,4,1)
+fin
