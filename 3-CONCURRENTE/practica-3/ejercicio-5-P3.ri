@@ -1,0 +1,109 @@
+programa ejercicio5P3
+procesos
+ {_____________________________________}
+  proceso asignarId
+  comenzar
+    EnviarMensaje(1,c1)
+    EnviarMensaje(2,c2)
+    EnviarMensaje(3,c3)
+    EnviarMensaje(4,c4)
+  fin
+  {______________________________________}
+  proceso recibirRecorrido(ES id: numero; ES cantRecorrido: numero)
+  comenzar
+    si(id = 1)
+      RecibirMensaje(cantRecorrido,c1)
+    sino
+      si(id = 2)
+        RecibirMensaje(cantRecorrido,c2)
+      sino
+        si(id = 3)
+          RecibirMensaje(cantRecorrido,c3)
+        sino
+          RecibirMensaje(cantRecorrido,c4)
+  fin
+  {______________________________________}
+  proceso actualizarMaximo(E id: numero; E cantRecorrido: numero; ES maxId: numero; ES maxRecorrido: numero)
+  comenzar
+    si(cantRecorrido > maxRecorrido)
+      maxRecorrido := cantRecorrido
+      maxId := id
+  fin
+  {______________________________________}
+areas
+  areaJefe: AreaP(1,1,1,1)
+  areaC1: AreaP(4,1,4,100)
+  areaC2: AreaP(6,1,6,100)
+  areaC3: AreaP(8,1,8,100)
+  areaC4: AreaP(10,1,10,100)
+  fuente: AreaPC(11,11,11,11)
+robots
+  {______________________________________}
+  robot robot1
+  variables
+    id,cantRecorrido,maxId,maxRecorrido: numero
+  comenzar
+    maxRecorrido := -1
+    asignarId
+    repetir 4
+      RecibirMensaje(id,*)
+      recibirRecorrido(id,cantRecorrido)
+      actualizarMaximo(id,cantRecorrido,maxId,maxRecorrido)
+    Informar('Ganador',maxId)
+    Informar('Recorrido',maxRecorrido)
+  fin
+  {______________________________________}
+  robot robot2
+  variables
+    id,esqRecorridas,avAct,caAct: numero
+    ok: boolean
+  comenzar
+    RecibirMensaje(id,jefe)
+    avAct := PosAv
+    caAct := PosCa
+    ok := V
+    mientras((ok) & (caAct < 100))
+      BloquearEsquina(11,11)
+      Pos(11,11)
+      si(HayPapelEnLaEsquina)
+        tomarPapel
+        Pos(avAct,caAct)
+        LiberarEsquina(11,11)
+        si(HayPapelEnLaBolsa)
+          depositarPapel
+        mover
+        avAct := PosAv
+        caAct := PosCa
+      sino
+        ok := F
+        EnviarMensaje(id,jefe)
+        EnviarMensaje(caAct,jefe)
+        Pos(avAct,caAct)
+        LiberarEsquina(11,11)
+    EnviarMensaje(id,jefe)
+    EnviarMensaje(caAct,jefe)
+    Pos(avAct,caAct)
+  fin
+  {______________________________________}
+variables
+  jefe: robot1
+  c1: robot2
+  c2: robot2
+  c3: robot2
+  c4: robot2
+comenzar
+  AsignarArea(c1,areaC1)
+  AsignarArea(c1,fuente)
+  AsignarArea(c2,areaC2)
+  AsignarArea(c2,fuente)
+  AsignarArea(c3,areaC3)
+  AsignarArea(c3,fuente)
+  AsignarArea(c4,areaC4)
+  AsignarArea(c4,fuente)
+  AsignarArea(jefe,areaJefe)
+  Iniciar(jefe, 1,1)
+  Iniciar(c1, 4,1)
+  Iniciar(c2, 6,1)
+  Iniciar(c3, 8,1)
+  Iniciar(c4, 10,1)
+fin

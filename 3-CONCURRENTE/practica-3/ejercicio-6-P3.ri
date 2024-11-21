@@ -1,0 +1,289 @@
+programa ejercicio6P3
+procesos
+  {________________________________}
+  proceso juntarFlores
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  {________________________________}
+  proceso juntarPapeles
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  {________________________________}
+  proceso limpiarEsquina
+  comenzar
+    juntarFlores
+    juntarPapeles
+  fin
+  {________________________________}
+  proceso asignarId
+  comenzar
+    EnviarMensaje(1,rb1)
+    EnviarMensaje(2,rb2)
+    EnviarMensaje(3,rb3)
+  fin
+  {________________________________}
+  proceso tramoConConflictoPapelesInf(E tramo: numero; E avConf: numero; E caConf: numero)
+  comenzar
+    repetir tramo
+      juntarPapeles
+      mover
+    juntarPapeles
+    BloquearEsquina(avConf,caConf)
+    mover
+    juntarPapeles
+    mover
+    LiberarEsquina(avConf,caConf)
+    repetir 6
+      juntarPapeles
+      mover
+  fin
+  {________________________________}
+  proceso tramoConConflictoPapelesSup(E tramo: numero; E avConf: numero; E caConf: numero)
+  comenzar
+    repetir 3
+      juntarPapeles
+      mover
+    juntarPapeles
+    BloquearEsquina(avConf,caConf)
+    mover
+    juntarPapeles
+    mover
+    LiberarEsquina(avConf,caConf)
+    repetir 5
+      juntarPapeles
+      mover
+  fin
+  {________________________________}
+  proceso tramoSinConflictoFlores
+  comenzar
+    repetir 6
+      juntarFlores
+      mover
+  fin
+  {________________________________}
+  proceso tramoConConflictoFlores(E tramo: numero; E avConf: numero; E caConf: numero)
+  comenzar
+    repetir tramo
+      juntarFlores
+      mover
+    juntarFlores
+    BloquearEsquina(avConf,caConf)
+    mover
+    juntarFlores
+    mover
+    LiberarEsquina(avConf,caConf)
+    repetir tramo
+      juntarFlores
+      mover
+  fin
+  {________________________________}
+  proceso tramoSinConflictoLimpiarEsquina
+  comenzar
+    repetir 7
+      limpiarEsquina
+      mover
+  fin
+  {________________________________}
+  proceso tramo1ConConflictoLimpiarEsquina(E tramo: numero; E avConf: numero; E caConf: numero)
+  comenzar
+    repetir 5
+      limpiarEsquina
+      mover
+    limpiarEsquina
+    BloquearEsquina(avConf,caConf)
+    mover
+    limpiarEsquina
+    mover
+    LiberarEsquina(avConf,caConf)
+    limpiarEsquina
+  fin
+  {________________________________}
+  proceso tramo2ConConflictoLimpiarEsquina(E tramo: numero; E avConf: numero; E caConf: numero)
+  comenzar
+    limpiarEsquina
+    mover
+    BloquearEsquina(avConf,caConf)
+    mover
+    limpiarEsquina
+    mover
+    LiberarEsquina(avConf,caConf)
+    repetir 4
+      limpiarEsquina
+      mover
+  fin
+  {________________________________}
+  proceso asignarCalle(E id: numero; E calle: numero)
+  comenzar
+    RecibirMensaje(id,*)
+    si(id = 1)
+      EnviarMensaje(calle,rb1)
+    sino
+      si(id = 2)
+        EnviarMensaje(calle,rb2)
+      sino
+        EnviarMensaje(calle,rb3)
+  fin
+  {________________________________}
+  proceso recorrerCalleFlores
+  comenzar
+    mientras((HayFlorEnLaBolsa) & (PosAv < 100))
+      depositarFlor
+      mover
+    si((HayFlorEnLaBolsa) & (PosAv = 100))
+      depositarFlor
+  fin
+  {________________________________}
+  proceso recorrerCallePapeles
+  comenzar
+    mientras((HayPapelEnLaBolsa) & (PosAv < 100))
+      depositarPapel
+      mover
+    si((HayPapelEnLaBolsa) & (PosAv = 100))
+      depositarPapel
+  fin
+  {________________________________}
+  proceso dejarFloresYPapeles
+  comenzar
+    si(HayFlorEnLaBolsa)
+      depositarFlor
+    si(HayPapelEnLaBolsa)
+      depositarPapel
+  fin
+  {________________________________}
+  proceso recorrerCalleLimpiarEsquina
+  comenzar
+    mientras(((HayFlorEnLaBolsa) | (HayPapelEnLaBolsa))& (PosAv < 100))
+      dejarFloresYPapeles
+      mover
+    si(((HayFlorEnLaBolsa) | (HayPapelEnLaBolsa)) & (PosAv = 100))
+      dejarFloresYPapeles
+  fin
+  {________________________________}
+areas
+  cuadrante: AreaPC(2,2,16,16)
+  cuadrante2: AreaPC(1,20,100,22) 
+  areaJefe: AreaP(1,1,1,1)
+robots
+  {________________________________}
+  robot robot1
+  variables
+    ok: boolean
+    calle,id: numero
+  comenzar
+    calle := 20
+    asignarId
+    repetir 3
+      RecibirMensaje(ok,*)
+      asignarCalle(id,calle)
+      calle := calle + 1
+  fin
+  {________________________________}
+  robot robot2
+  variables
+    avConf,caConf,caDest,tramo,id: numero
+    ok: boolean
+  comenzar
+    ok := V
+    RecibirMensaje(id,jefe)
+    tramo := 2
+    avConf := 5
+    caConf := 8
+    tramoSinConflictoFlores
+    derecha
+    tramoConConflictoFlores(tramo,avConf,caConf)
+    derecha
+    avConf := avConf + 3
+    caConf := caConf - 3
+    tramoConConflictoFlores(tramo,avConf,caConf)
+    derecha
+    tramoSinConflictoFlores
+    derecha
+    EnviarMensaje(ok,jefe)
+    EnviarMensaje(id,jefe)
+    RecibirMensaje(caDest,jefe)
+    Pos(1,caDest)
+    derecha
+    recorrerCalleFlores
+  fin
+  {________________________________}
+  robot robot3
+  variables
+    tramo,avConf,caConf,caDest,id: numero
+    ok: boolean
+  comenzar
+    ok := V
+    RecibirMensaje(id,jefe)
+    tramo := 2
+    avConf := 5
+    caConf := 8
+    tramoConConflictoPapelesInf(tramo,avConf,caConf)
+    avConf := avConf + 3
+    caConf := caConf - 3
+    derecha
+    tramoConConflictoPapelesSup(tramo,avConf,caConf)
+    derecha
+    avConf := 9
+    caConf := 15
+    tramoConConflictoPapelesSup(tramo,avConf,caConf)
+    derecha
+    avConf := avConf + 6
+    caConf := caConf - 6
+    tramoConConflictoPapelesInf(tramo,avConf,caConf)
+    derecha
+    EnviarMensaje(ok,jefe)
+    EnviarMensaje(id,jefe)
+    RecibirMensaje(caDest,jefe)
+    Pos(1,caDest)
+    derecha
+    recorrerCallePapeles
+  fin
+  {________________________________}
+  robot robot4
+  variables
+    tramo,avConf,caConf,caDest,id: numero
+    ok: boolean
+  comenzar
+    ok := V
+    RecibirMensaje(id,jefe)
+    tramo := 2
+    avConf := 5
+    caConf := 8 
+    tramo1ConConflictoLimpiarEsquina(tramo,avConf,caConf)
+    derecha
+    tramoSinConflictoLimpiarEsquina
+    derecha
+    avConf := avConf + 3
+    caConf := caConf - 3
+    tramoSinConflictoLimpiarEsquina
+    derecha
+    tramo2ConConflictoLimpiarEsquina(tramo,avConf,caConf)
+    derecha
+    EnviarMensaje(ok,jefe)
+    EnviarMensaje(id,jefe)
+    RecibirMensaje(caDest,jefe)
+    Pos(1,caDest)
+    derecha
+    recorrerCalleLimpiarEsquina
+  fin
+variables
+  jefe: robot1
+  rb1: robot2
+  rb2: robot3
+  rb3: robot4
+comenzar
+  AsignarArea(rb1,cuadrante)
+  AsignarArea(rb1,cuadrante2)
+  AsignarArea(rb2,cuadrante)
+  AsignarArea(rb2,cuadrante2)
+  AsignarArea(rb3,cuadrante)
+  AsignarArea(rb3,cuadrante2)
+  AsignarArea(jefe,areaJefe)
+  Iniciar(rb1,2,2)
+  Iniciar(rb2,5,5)
+  Iniciar(rb3,9,9)  
+  Iniciar(jefe,1,1)
+fin
