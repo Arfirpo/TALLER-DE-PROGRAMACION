@@ -1,0 +1,129 @@
+programa ejemplo
+procesos
+  {_______________________________}
+  proceso recolectarFlores(ES cantFlores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  {_______________________________}
+  proceso depositarFlores(E cantFlores: numero; E avIni: numero; E caIni: numero)
+  comenzar
+    repetir cantFlores
+      BloquearEsquina(5,5)
+      Pos(5,5)
+      depositarFlor
+      Pos(avIni,caIni)
+      LiberarEsquina(5,5)
+  fin
+  {_______________________________}
+  proceso realizarTarea(E avIni: numero; E caIni: numero; ES avDest: numero; ES caDest: numero)
+  variables
+    cantFlores: numero
+  comenzar
+    cantFlores := 0
+    BloquearEsquina(avDest,caDest)
+    Pos(avDest,caDest)
+    recolectarFlores(cantFlores)
+    Pos(avIni,caIni)
+    LiberarEsquina(avDest,caDest)
+    depositarFlores(cantFlores,avIni,caIni)
+  fin
+  {_______________________________}
+  proceso enviarEsquina(E ID: numero; ES contador: numero)
+  variables
+    av,ca: numero
+    ok: boolean
+  comenzar
+    Random(av,10,30)
+    Random(ca,10,30)
+    si(ID = 1)
+      RecibirMensaje(ok,rF1)
+      si(ok)
+        EnviarMensaje(av,rF1)
+        EnviarMensaje(ca,rF1)        
+      sino
+        contador := contador + 1
+    sino
+      si(ID = 2)
+        RecibirMensaje(ok,rF2)
+        si(ok)
+          EnviarMensaje(av,rF2)
+          EnviarMensaje(ca,rF2)        
+        sino
+          contador := contador +1
+      sino
+        RecibirMensaje(ok,rF3)
+        si(ok)
+          EnviarMensaje(av,rF3)
+          EnviarMensaje(ca,rF3)        
+        sino
+          contador := contador +1
+  fin
+  {_______________________________}
+areas
+  areaF1: AreaP(1,1,1,1)
+  areaF2: AreaP(2,1,2,1)
+  areaF3: AreaP(3,1,3,1)
+  areaFiscal: AreaP(5,1,5,1)
+  cuadrante: AreaPC(10,10,30,30)
+  pozo: AreaC(5,5,5,5)
+robots
+  {_______________________________}
+  robot servidor
+  variables
+    ID,contador,cantFlores: numero
+  comenzar
+    contador := 0
+    cantFlores := 0
+    mientras(contador <> 3)
+      RecibirMensaje(ID,*)
+      enviarEsquina(ID,contador)
+    Pos(5,5)
+    recolectarFlores(cantFlores)
+    Informar('Total',cantFlores)
+  fin
+  {_______________________________}
+  robot cliente
+  variables
+    ID,int,avDest,caDest,avIni,caIni: numero
+    ok: boolean
+  comenzar
+    ID := PosAv
+    avIni := PosAv
+    caIni := PosCa
+    ok := V
+    Random(int,2,5)
+    repetir int
+      EnviarMensaje(ID,fiscal)
+      EnviarMensaje(ok,fiscal)
+      RecibirMensaje(avDest,fiscal)
+      RecibirMensaje(caDest,fiscal)
+      realizarTarea(avIni,caIni,avDest,caDest)
+    EnviarMensaje(ID,fiscal)
+    EnviarMensaje(F,fiscal)
+  fin
+  {_______________________________}
+variables
+  fiscal: servidor
+  rF1: cliente
+  rF2: cliente
+  rF3: cliente
+comenzar
+  AsignarArea(fiscal,areaFiscal)
+  AsignarArea(fiscal,pozo)
+  AsignarArea(rF1,areaF1)
+  AsignarArea(rF1,pozo)
+  AsignarArea(rF1,cuadrante)
+  AsignarArea(rF2,areaF2)
+  AsignarArea(rF2,pozo)
+  AsignarArea(rF2,cuadrante)
+  AsignarArea(rF3,areaF3)
+  AsignarArea(rF3,pozo)
+  AsignarArea(rF3,cuadrante)
+  Iniciar(fiscal,5,1)
+  Iniciar(rF1,1,1)
+  Iniciar(rF2,2,1)
+  Iniciar(rF3,3,1)
+fin

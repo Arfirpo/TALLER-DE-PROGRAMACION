@@ -1,0 +1,204 @@
+programa parcialTurnoC
+procesos
+  {_______________________________________}
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1,RF1)
+    EnviarMensaje(2,RF2)
+    EnviarMensaje(3,RP)
+  fin
+  {_______________________________________}
+  proceso recolectarFlores(ES cantFlores: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantFlores := cantFlores + 1
+  fin
+  {_______________________________________}
+  proceso recolectarPapeles(ES cantPapeles: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantPapeles := cantPapeles + 1
+  fin
+  {_______________________________________}
+  proceso avisarCalle(E calle: numero)
+  comenzar
+    EnviarMensaje(calle,RF1)
+    EnviarMensaje(calle,RF2)
+  fin
+  {_______________________________________}
+  proceso esquinaConflictoP(E calle: numero; ES cantPapeles: numero)
+  comenzar
+    recolectarPapeles(cantPapeles)
+    BloquearEsquina((PosAv+1),calle)
+    mover
+    recolectarPapeles(cantPapeles)
+    mover
+    LiberarEsquina((PosAv-1),calle)
+  fin
+  {_______________________________________}
+  proceso esquinaConflictoF(E calle: numero; ES cantFlores: numero)
+  comenzar
+    recolectarFlores(cantFlores)
+    BloquearEsquina(PosAv,calle)
+    mover
+    recolectarFlores(cantFlores)
+    mover
+    LiberarEsquina(PosAv,calle)
+  fin
+  {_______________________________________}
+  proceso recorrerP(E ID: numero)
+  variables
+    calle,cantPapeles: numero
+  comenzar
+    cantPapeles := 0
+    Random(calle,2,20)
+    avisarCalle(calle)
+    Pos(1,calle)
+    derecha
+    mientras(PosAv < 5)
+      recolectarPapeles(cantPapeles)
+      mover
+    esquinaConflictoP(calle,cantPapeles)
+    mientras(PosAv < 10)
+      recolectarPapeles(cantPapeles)
+      mover
+    esquinaConflictoP(calle,cantPapeles)
+    mientras(PosAv < 100)
+      recolectarPapeles(cantPapeles)
+      mover
+    recolectarPapeles(cantPapeles)
+    EnviarMensaje(ID,fiscal)
+    EnviarMensaje(cantPapeles,fiscal)
+  fin
+  {_______________________________________}
+  proceso recorrerF(E ID: numero)
+  variables
+    calle,cantFlores: numero
+  comenzar
+    cantFlores := 0
+    RecibirMensaje(calle,RP)
+    mientras(PosCa < (calle -1))
+      recolectarFlores(cantFlores)
+      mover
+    esquinaConflictoF(calle,cantFlores)
+    mientras(PosCa < 100)
+      recolectarFlores(cantFlores)
+      mover
+    recolectarFlores(cantFlores)
+    EnviarMensaje(ID,fiscal)
+    EnviarMensaje(cantFlores,fiscal)
+  fin
+  {_______________________________________}
+  proceso actualizarMaximo(E ID: numero; ES robotMax: numero; ES max: numero)
+  variables
+    cantRec: numero
+  comenzar
+    si(ID = 1)
+      RecibirMensaje(cantRec,RF1)
+    sino
+      si(ID = 2)
+        RecibirMensaje(cantRec,RF2)
+      sino
+        RecibirMensaje(cantRec,RP)
+    si(cantRec > max)
+      max := cantRec
+      robotMax := ID
+  fin
+  {_______________________________________}
+  proceso instruccionFinal(E ID: numero)
+  comenzar
+    si(ID = 1)
+      EnviarMensaje(V,RF1)
+      EnviarMensaje(F,RF2)
+      EnviarMensaje(F,RP)
+    sino
+      si(ID = 2)
+        EnviarMensaje(F,RF1)
+        EnviarMensaje(V,RF2)
+        EnviarMensaje(F,RP)
+      sino
+        EnviarMensaje(F,RF1)
+        EnviarMensaje(F,RF2)
+        EnviarMensaje(V,RP)
+  fin
+  {_______________________________________}
+areas
+  areaFiscal: AreaP(1,1,1,1)
+  areaRF1: AreaP(6,1,6,1)
+  areaRF1b: AreaP(6,21,6,100)
+  areaRF2: AreaP(11,1,11,1)
+  areaRF2b: AreaP(11,21,11,100)
+  areaRP: AreaP(2,1,2,1)
+  areaRPb: AreaP(1,2,5,20)
+  areaRPc: AreaP(7,2,10,20)
+  areaRPd: AreaP(12,2,100,20)
+  comp1: AreaPC(6,2,6,20)
+  comp2: AreaPC(11,2,11,20)
+robots
+  {_______________________________________}
+  robot robot1
+  variables
+    ID,max,robotMax: numero
+  comenzar
+    asignarID
+    max := -1
+    repetir 3
+      RecibirMensaje(ID,*)
+      actualizarMaximo(ID,robotMax,max)
+    instruccionFinal(robotMax)
+  fin
+  {_______________________________________}
+  robot robot2
+  variables
+    ID,avIni,caIni: numero
+    ok: boolean
+  comenzar
+    avIni := PosAv
+    caIni := PosCa
+    RecibirMensaje(ID,fiscal)
+    recorrerF(ID)
+    RecibirMensaje(ok,fiscal)
+    si(ok)
+      Pos(avIni,caIni)    
+  fin
+  {_______________________________________}
+  robot robot3
+  variables
+    ID,avIni,caIni: numero
+    ok: boolean
+  comenzar
+    avIni := PosAv
+    caIni := PosCa
+    RecibirMensaje(ID,fiscal)
+    recorrerP(ID)
+    RecibirMensaje(ok,fiscal)
+    si(ok)
+      Pos(avIni,caIni)
+  fin
+  {_______________________________________}
+variables
+  fiscal: robot1
+  RF1: robot2
+  RF2: robot2
+  RP: robot3
+comenzar
+  AsignarArea(fiscal,areaFiscal)
+  AsignarArea(RF1,areaRF1)
+  AsignarArea(RF1,areaRF1b)  
+  AsignarArea(RF1,comp1)
+  AsignarArea(RF2,areaRF2)
+  AsignarArea(RF2,areaRF2b)
+  AsignarArea(RF2,comp2)
+  AsignarArea(RP,areaRP)
+  AsignarArea(RP,areaRPb)
+  AsignarArea(RP,areaRPc)
+  AsignarArea(RP,areaRPd)
+  AsignarArea(RP,comp1)  
+  AsignarArea(RP,comp2)
+  Iniciar(fiscal,1,1)
+  Iniciar(RP,2,1)
+  Iniciar(RF1,6,1)
+  Iniciar(RF2,11,1)
+fin

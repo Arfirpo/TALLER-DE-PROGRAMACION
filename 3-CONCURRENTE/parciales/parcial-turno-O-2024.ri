@@ -1,0 +1,194 @@
+programa parcialTurnoO
+procesos
+  {_______________________________}
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+    EnviarMensaje(3,r3)
+    EnviarMensaje(4,r4)
+  fin
+  {_______________________________}
+  proceso recolectarFlores(ES cantF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantF := cantF + 1
+  fin
+  {_______________________________}
+  proceso escalon(ES cantF: numero)
+  comenzar
+    repetir 10
+      recolectarFlores(cantF)
+      mover
+    recolectarFlores(cantF)
+    derecha 
+    repetir 9
+      recolectarFlores(cantF)
+      mover
+    recolectarFlores(cantF)
+  fin
+  {_______________________________}
+  proceso depositarFlores(E cantF: numero)
+  variables
+    avIni,caIni: numero
+  comenzar
+    avIni := PosAv
+    caIni := PosCa
+    repetir cantF
+      BloquearEsquina(20,20)
+      Pos(20,20)
+      depositarFlor
+      Pos(avIni,caIni)
+      LiberarEsquina(20,20)
+  fin
+  {_______________________________}
+  proceso actualizarMaximo(E ID: numero; ES max: numero; ES totA: numero; ES totB: numero)
+  variables
+    cant: numero
+  comenzar
+    si(ID = 1)
+      RecibirMensaje(cant,r1)
+      totA := totA + cant
+    sino
+      si(ID = 2)
+        RecibirMensaje(cant,r2)
+        totA := totA + cant
+      sino
+        si(ID = 3)
+          RecibirMensaje(cant,r3)
+          totB := totB + cant
+        sino
+          RecibirMensaje(cant,r4)
+          totB := totB + cant
+    si(totA > totB)
+      max := totA
+    sino
+      si(totB > totA)
+        max := totB
+  fin
+  {_______________________________}
+areas
+  pozo: AreaPC(20,20,20,20)
+  areaFiscal: AreaP(50,50,50,50)
+  areaR1: AreaP(1,1,1,11)
+  areaR1b: AreaP(2,11,10,11)
+  areaR2: AreaP(11,1,11,11)
+  areaR2b: AreaP(2,1,10,1)
+  areaR3: AreaP(20,1,20,11)
+  areaR3b: AreaP(21,11,29,11)
+  areaR4: AreaP(30,1,30,11)
+  areaR4b: AreaP(21,1,29,1)
+robots
+  {_______________________________}
+  robot robot1
+  variables
+    ID,max,totA,totB: numero
+  comenzar
+    totA := 0
+    totB := 0
+    asignarID
+    max := -1
+    repetir 4
+      RecibirMensaje(ID,*)
+      actualizarMaximo(ID,max,totA,totB)
+    Informar('Maximo',max)
+  fin
+  {_______________________________}
+  robot robot2
+  variables
+    cantF,ID: numero
+    ok: numero
+  comenzar
+    RecibirMensaje(ID,fiscal)
+    cantF := 0
+    escalon(cantF)
+    EnviarMensaje(V,r2)
+    RecibirMensaje(ok,r2)
+    Informar(cantF)
+    si(cantF <> 0)
+      depositarFlores(cantF)
+    EnviarMensaje(ID,fiscal)
+    EnviarMensaje(cantF,fiscal)
+  fin
+  {_______________________________}
+  robot robot3
+  variables
+    cantF,ID: numero
+    ok: boolean
+  comenzar
+    cantF := 0
+    RecibirMensaje(ID,fiscal)
+    RecibirMensaje(ok,r1)
+    repetir 2
+      derecha
+    escalon(cantF)
+    EnviarMensaje(V,r1)
+    Informar(cantF)
+    si(cantF <> 0)
+      depositarFlores(cantF)
+    EnviarMensaje(ID,fiscal)
+    EnviarMensaje(cantF,fiscal)
+  fin
+  {_______________________________}
+  robot robot4
+  variables
+    cantF,ID: numero
+    ok: boolean
+  comenzar
+    RecibirMensaje(ID,fiscal)
+    cantF := 0
+    escalon(cantF)
+    EnviarMensaje(V,r4)
+    RecibirMensaje(ok,r4)
+    Informar(cantF)
+    si(cantF <> 0)
+      depositarFlores(cantF)
+    EnviarMensaje(ID,fiscal)
+    EnviarMensaje(cantF,fiscal)
+  fin
+  {_______________________________}
+  robot robot5
+  variables
+    cantF,ID: numero
+    ok: boolean
+  comenzar
+    RecibirMensaje(ID,fiscal)
+    cantF := 0
+    repetir 2
+      derecha
+    RecibirMensaje(ok,r3)
+    escalon(cantF)
+    EnviarMensaje(V,r3)
+    Informar(cantF)
+    si(cantF <> 0)
+      depositarFlores(cantF) 
+    EnviarMensaje(ID,fiscal)
+    EnviarMensaje(cantF,fiscal)
+  fin
+variables
+  fiscal: robot1
+  r1: robot2
+  r2: robot3
+  r3: robot4
+  r4: robot5
+comenzar
+  AsignarArea(fiscal,areaFiscal)
+  AsignarArea(r1,areaR1)
+  AsignarArea(r1,areaR1b)
+  AsignarArea(r1,pozo)
+  AsignarArea(r2,areaR2)
+  AsignarArea(r2,areaR2b)
+  AsignarArea(r2,pozo)
+  AsignarArea(r3,areaR3)
+  AsignarArea(r3,areaR3b)
+  AsignarArea(r3,pozo)
+  AsignarArea(r4,areaR4)
+  AsignarArea(r4,areaR4b)
+  AsignarArea(r4,pozo) 
+  Iniciar(r1,1,1)
+  Iniciar(r2,11,11)
+  Iniciar(r3,20,1)
+  Iniciar(r4,30,11)
+  Iniciar(fiscal,50,50)
+fin

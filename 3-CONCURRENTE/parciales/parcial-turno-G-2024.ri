@@ -1,0 +1,188 @@
+programa parcialTurnoG
+procesos
+  {____________________________________}
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+  {____________________________________}
+  proceso limpiar
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  {____________________________________}
+  proceso avenida
+  comenzar
+    repetir 5
+      limpiar
+      mover
+    limpiar
+  fin
+  {____________________________________}
+  proceso lado
+  comenzar
+    avenida
+    derecha
+    mover
+    derecha
+    avenida
+    izquierda
+    mover
+    izquierda
+  fin
+  {____________________________________}
+  proceso limpiarCuadrante
+  comenzar
+    Pos(40,40)
+    repetir 2
+      lado
+    avenida
+    derecha
+    mover
+    derecha
+    avenida
+  fin
+  {____________________________________}
+  proceso asignarID
+  comenzar
+    EnviarMensaje(1,r1)
+    EnviarMensaje(2,r2)
+  fin
+  {____________________________________}
+  proceso asignarCalle(E ID: numero)
+  variables
+    avDest,caDest: numero
+  comenzar
+    Random(avDest,40,45)
+    Random(caDest,40,45)
+    si(ID = 1)
+      EnviarMensaje(avDest,r1)
+      EnviarMensaje(caDest,r1)
+    sino
+      EnviarMensaje(avDest,r2)
+      EnviarMensaje(caDest,r2)
+  fin
+  {____________________________________}
+  proceso recolectarFlores(ES cantF: numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      cantF := cantF + 1
+  fin
+  {____________________________________}
+  proceso recolectarPapeles(ES cantP: numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      cantP := cantP + 1
+  fin
+  {____________________________________}
+  proceso depositarFlores(E cantF: numero; E avIni: numero; E caIni: numero; E avDest: numero; E caDest: numero)
+  comenzar
+    repetir cantF
+      BloquearEsquina(avDest,caDest)
+      Pos(avDest,caDest)
+      si(HayFlorEnLaBolsa)
+        depositarFlor
+      Pos(avIni,caIni)
+      LiberarEsquina(avDest,caDest)
+  fin
+  {____________________________________}
+  proceso depositarPapeles(E cantP: numero; E avIni: numero; E caIni: numero; E avDest: numero; E caDest: numero)
+  comenzar
+    repetir cantP
+      BloquearEsquina(avDest,caDest)
+      Pos(avDest,caDest)
+      si(HayPapelEnLaBolsa)
+        depositarPapel
+      Pos(avIni,caIni)
+      LiberarEsquina(avDest,caDest)
+  fin
+  {____________________________________}
+  proceso depositarTodo(E cantF: numero; E cantP: numero; E avDest: numero; E caDest: numero)
+  variables
+    avIni,caIni: numero
+  comenzar
+    avIni := PosAv
+    caIni := PosCa
+    depositarFlores(cantF,avIni,caIni,avDest,caDest)
+    depositarPapeles(cantP,avIni,caIni,avDest,caDest)
+  fin
+  {____________________________________}
+  proceso limpiarEsquina(ES cantF: numero; ES cantP: numero)
+  comenzar
+    si(HayFlorEnLaEsquina)
+      recolectarFlores(cantF)
+    si(HayPapelEnLaEsquina)
+      recolectarPapeles(cantP)
+  fin
+  {____________________________________}
+  proceso recorrerAvenida(E numAv: numero; ES cantF: numero; ES cantP: numero)
+  comenzar
+    Pos(numAv, 1)
+    repetir 99
+      limpiarEsquina(cantF,cantP)
+      mover
+    limpiarEsquina(cantF,cantP)
+  fin
+  {____________________________________}
+areas
+  areaFiscal: AreaP(1,1,1,1)
+  cuadrante: AreaC(40,40,45,45)
+  avenidas: AreaPC(4,1,11,100)
+robots
+  {____________________________________}
+  robot robot1
+  variables
+    ID,ganador: numero
+    ok: boolean
+  comenzar
+    asignarID
+    repetir 8
+      RecibirMensaje(ID,*)
+      asignarCalle(ID)
+    RecibirMensaje(ID,*)
+    ganador := ID
+    RecibirMensaje(ID,*)
+    limpiarCuadrante 
+    Informar('Ganador',ganador)   
+  fin
+  {____________________________________}
+  robot robot2
+  variables
+    numAv,ID,cantF,cantP,avDest,caDest: numero
+  comenzar
+    RecibirMensaje(ID,fiscal)
+    numAv := PosAv
+    repetir 4
+      cantF := 0
+      cantP := 0
+      recorrerAvenida(numAv,cantF,cantP)
+      EnviarMensaje(ID,fiscal)
+      RecibirMensaje(avDest,fiscal)
+      RecibirMensaje(caDest,fiscal)
+      si(cantF <> 0) | (cantP <> 0)
+        depositarTodo(cantF,cantP,avDest,caDest)
+      numAv := PosAv + 2
+    EnviarMensaje(ID,fiscal)
+  fin
+  {____________________________________}
+variables
+  fiscal: robot1
+  r1: robot2
+  r2: robot2 
+comenzar
+  AsignarArea(fiscal,areaFiscal)
+  AsignarArea(fiscal,cuadrante)
+  AsignarArea(r1,avenidas)
+  AsignarArea(r1,cuadrante)
+  AsignarArea(r2,avenidas)
+  AsignarArea(r2,cuadrante)
+  Iniciar(fiscal,1,1)
+  Iniciar(r1,4,1)
+  Iniciar(r2,5,1)
+fin
